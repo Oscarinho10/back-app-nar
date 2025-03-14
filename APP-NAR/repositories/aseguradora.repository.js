@@ -55,6 +55,11 @@ class AseguradoraRepository {
         // new: true -> devuelve el producto actualizado
         return await Aseguradora.findByIdAndUpdate(id, { estado: 'inactivo'}, {new: true });
     }
+
+    async updateAseguradoraStatusActive(id) {
+        // new: true -> devuelve el producto actualizado
+        return await Aseguradora.findByIdAndUpdate(id, { estado: 'activo'}, {new: true });
+    }
 }
 
 module.exports = new AseguradoraRepository();

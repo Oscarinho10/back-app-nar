@@ -17,6 +17,19 @@ class Validaciones {
         }
     }
 
+    validarCURP(curp) {
+        let regexCURP = /^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[0-9A-Z]{2}$/;
+        if (!regexCURP.test(curp)) {
+            throw new Error('El CURP no tiene el formato correcto');
+        }
+    }
+
+    validarContrasena(contrasena) {
+        if (contrasena.length < 6) {
+            throw new Error('La contraseña debe tener al menos 6 caracteres');
+        }
+    }
+
     esFechaValida(fecha) {
         const regexFecha = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 

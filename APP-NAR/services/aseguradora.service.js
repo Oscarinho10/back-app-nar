@@ -16,6 +16,15 @@ class AseguradoraService {
         return aseguradora;
     }
 
+    async getAseguradorasByNombre(nombre) {
+        const aseguradora = await AseguradoraRepository.getAseguradorasByNombre(nombre);
+        if (!aseguradora) {
+            throw new Error('Aseguradora no encontrada');
+        }
+
+        return aseguradora;
+    }
+
     async createAseguradora(aseguradora) {
         //Validar que todos los campos obligatorios vengan
         if (!aseguradora.nombre || !aseguradora.informacion || !aseguradora.seguros || !aseguradora.nombreContacto || !aseguradora.correoContacto || !aseguradora.telefonoContacto) {
@@ -85,6 +94,18 @@ class AseguradoraService {
         return await AseguradoraRepository.updateAseguradoraStatusInactive(id)
 
     }
+
+    async updateAseguradoraStatusActive(id) {
+        //Validar que la aseguradora exista
+        const aseguradora = await AseguradoraRepository.getAseguradoraById(id);
+        if (!aseguradora) {
+            throw new Error('Aseguradora no encontrada')
+        }
+        return await AseguradoraRepository.updateAseguradoraStatusActive(id)
+
+    }
+
+
 }
 
 module.exports = new AseguradoraService();
