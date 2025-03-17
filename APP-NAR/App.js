@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors'); // Importar el paquete cors
 const bodyParser = require('body-parser');
 const aseguradorasRoutes = require('./routes/aseguradora.routes');
 const clientesRoutes = require('./routes/cliente.routes');
@@ -8,6 +9,8 @@ const usuariosRoutes = require('./routes/usuario.routes');
 
 const App = express();
 const PORT = 3000;
+
+App.use(cors());
 
 App.use(bodyParser.json());
 
