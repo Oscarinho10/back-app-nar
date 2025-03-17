@@ -6,6 +6,10 @@ class AseguradoraRepository {
         return await Aseguradora.find();
     }
 
+    async getAllAseguradorasActivas() {
+        return await Aseguradora.find({ estado: 'activo' }); // Retorna solo seguros activos
+    }
+
     // Obtener aseguradora por ID
     async getAseguradoraById(id) {
         return await Aseguradora.findById(id);
@@ -53,12 +57,12 @@ class AseguradoraRepository {
 
     async updateAseguradoraStatusInactive(id) {
         // new: true -> devuelve el producto actualizado
-        return await Aseguradora.findByIdAndUpdate(id, { estado: 'inactivo'}, {new: true });
+        return await Aseguradora.findByIdAndUpdate(id, { estado: 'inactivo' }, { new: true });
     }
 
     async updateAseguradoraStatusActive(id) {
         // new: true -> devuelve el producto actualizado
-        return await Aseguradora.findByIdAndUpdate(id, { estado: 'activo'}, {new: true });
+        return await Aseguradora.findByIdAndUpdate(id, { estado: 'activo' }, { new: true });
     }
 }
 

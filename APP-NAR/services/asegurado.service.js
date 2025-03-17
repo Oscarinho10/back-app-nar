@@ -53,6 +53,11 @@ class AseguradoService {
         //Validar que la fecha de nacimiento sea válida
         Utils.calcularEdad(asegurado.fechaNacimiento);
 
+        const cliente = await AseguradoRepository.getClienteById(asegurado.idCliente);
+        if (!cliente) {
+            throw new Error('El cliente no existe');
+        }
+
         return await AseguradoRepository.createAsegurado(asegurado);
     }
 

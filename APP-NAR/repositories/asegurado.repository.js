@@ -1,9 +1,14 @@
 const Asegurado = require('../models/asegurado.model');
+const Cliente = require('../models/cliente.model');
 
 class AseguradoRepository {
 
     async getAllAsegurados() {
         return await Asegurado.find();
+    }
+
+    async getClienteById(id) {
+        return await Cliente.findById(id);
     }
 
     async getAseguradoById(id) {

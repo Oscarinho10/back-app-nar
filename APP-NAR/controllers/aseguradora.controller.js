@@ -12,6 +12,17 @@ class AseguradoraController {
         }
     }
 
+    async getAllAseguradorasActivas(req, res) {
+        try {
+            const aseguradoras = await AseguradoraService.getAllAseguradorasActivas();
+            // Por defecto siempre retorna 200 si no se le especifica el status
+            // 200 -> éxito | OK 
+            res.status(200).json(aseguradoras);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async getAseguradoraById(req, res) {
         try {
             //Validar que el Id venga en la petición

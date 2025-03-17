@@ -7,6 +7,10 @@ class AseguradoraService {
         return await AseguradoraRepository.getAllAseguradoras();
     }
 
+    async getAllAseguradorasActivas() {
+        return await AseguradoraRepository.getAllAseguradorasActivas();
+    }
+
     async getAseguradoraById(id) {
         const aseguradora = await AseguradoraRepository.getAseguradoraById(id);
         if (!aseguradora) {

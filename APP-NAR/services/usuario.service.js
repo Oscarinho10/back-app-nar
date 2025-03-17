@@ -7,6 +7,10 @@ class AseguradoraService {
         return await UsuarioRepository.getAllUsuarios();
     }
 
+    async getAllUsuariosActivos() {
+        return await UsuarioRepository.getAllUsuariosActivos();
+    }
+
     async getUsuarioById(id) {
         const usuario = await UsuarioRepository.getUsuarioById(id);
         if (!usuario) {
@@ -219,7 +223,7 @@ class AseguradoraService {
         }
 
         //Validar que todos los campos vengan en el body
-        if (!usuario.nombre || !usuario.apellidoPaterno || !usuario.apellidoMaterno || !usuario.curp || !usuario.rfc || !usuario.correo || !usuario.contrasena || !usuario.telefono ) {
+        if (!usuario.nombre || !usuario.apellidoPaterno || !usuario.apellidoMaterno || !usuario.curp || !usuario.rfc || !usuario.correo || !usuario.contrasena || !usuario.telefono) {
             throw new Error('Todos los campos son requeridos');
         }
 
