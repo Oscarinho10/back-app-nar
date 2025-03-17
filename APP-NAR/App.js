@@ -26,3 +26,15 @@ mongoose.connect('mongodb+srv://20233tn143:5yZYXxMXa6998s1H@mongazo1.yez4y.mongo
     })
     .catch((err) => console.log('Error al conectar en MongoDB', err));
 // mongodb+srv://20233tn143:5yZYXxMXa6998s1H@mongazo1.yez4y.mongodb.net/?retryWrites=true&w=majority&appName=Mongazo1'
+
+/**
+ * ¿Y dónde estás tú?
+Aún tengo el tattoo, mientras tú tapaste con un fuck you el mío
+No dejo dormir a los pinches vecinos
+Con los tragos lloro, con un polvo me río
+
+Y yo seguiré siendo un desmadre
+Tú tendrás tu familia, pa' mí será tarde
+Pidiendo otra onza, pidiendo más vino
+Tú querías tus hijos, pero no conmigo
+ */
