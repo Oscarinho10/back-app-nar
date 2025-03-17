@@ -26,7 +26,25 @@ class UsuarioController {
         }
     }
 
-    async createUsuario(req, res) {
+    async createUsuarioPostulante(req, res) {
+        try {
+            const usuario = await UsuarioService.createUsuario(req.body);
+            res.json(usuario);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async createUsuarioAgente(req, res) {
+        try {
+            const usuario = await UsuarioService.createUsuario(req.body);
+            res.json(usuario);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async createUsuarioAdmin(req, res) {
         try {
             const usuario = await UsuarioService.createUsuario(req.body);
             res.json(usuario);
