@@ -7,6 +7,7 @@ const clientesRoutes = require('./routes/cliente.routes');
 const aseguradosRoutes = require('./routes/asegurado.routes');
 const usuariosRoutes = require('./routes/usuario.routes');
 const segurosRoutes = require('./routes/seguro.routes');
+const cotizacionesRoutes = require('./routes/cotizacion.routes');
 
 const App = express();
 const PORT = 3000;
@@ -20,6 +21,7 @@ App.use('/nar/clientes', clientesRoutes);
 App.use('/nar/asegurados', aseguradosRoutes);
 App.use('/nar/usuarios', usuariosRoutes);
 App.use('/nar/seguros', segurosRoutes);
+App.use('/nar/cotizaciones', cotizacionesRoutes);
 
 // mongodb+srv://20233tn143:5yZYXxMXa6998s1H@mongazo1.yez4y.mongodb.net/?retryWrites=true&w=majority&appName=Mongazo1'
 mongoose.connect('mongodb+srv://20233tn143:5yZYXxMXa6998s1H@mongazo1.yez4y.mongodb.net/app-nar-db?retryWrites=true&w=majority&appName=Mongazo1')
