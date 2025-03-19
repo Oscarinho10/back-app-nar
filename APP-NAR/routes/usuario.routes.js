@@ -11,6 +11,7 @@ router.get('/nombre/:nombre', UsuarioController.getUsuariosByNombre);
 router.post('/postulante', UsuarioController.createUsuarioPostulante);
 router.post('/agente', UsuarioController.createUsuarioAgente);
 router.post('/admin', UsuarioController.createUsuarioAdmin);
+router.post('/login', UsuarioController.login); 
 router.put('/:id', UsuarioController.updateUsuario);
 router.put('/inactive/:id', UsuarioController.updateUsuarioStatusInactive);
 router.put('/active/:id', UsuarioController.updateUsuarioStatusActive);

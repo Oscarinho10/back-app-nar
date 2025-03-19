@@ -50,7 +50,8 @@ class UsuarioController {
 
     async createUsuarioPostulante(req, res) {
         try {
-            const usuario = await UsuarioService.createUsuario(req.body);
+            // Llamar a createUsuarioPostulante en lugar de createUsuario
+            const usuario = await UsuarioService.createUsuarioPostulante(req.body);
             res.json(usuario);
         } catch (error) {
             res.status(400).json({ message: error.message });
@@ -59,7 +60,8 @@ class UsuarioController {
 
     async createUsuarioAgente(req, res) {
         try {
-            const usuario = await UsuarioService.createUsuario(req.body);
+            // Llamar a createUsuarioAgente en lugar de createUsuario
+            const usuario = await UsuarioService.createUsuarioAgente(req.body);
             res.json(usuario);
         } catch (error) {
             res.status(400).json({ message: error.message });
@@ -68,7 +70,8 @@ class UsuarioController {
 
     async createUsuarioAdmin(req, res) {
         try {
-            const usuario = await UsuarioService.createUsuario(req.body);
+            // Llamar a createUsuarioAdmin en lugar de createUsuario
+            const usuario = await UsuarioService.createUsuarioAdmin(req.body);
             res.json(usuario);
         } catch (error) {
             res.status(400).json({ message: error.message });
@@ -119,6 +122,20 @@ class UsuarioController {
             res.json(usuarios);
         } catch (error) {
             res.status(400).json({ message: error.message });
+        }
+    }
+
+    async login(req, res) {
+        try {
+            const { correo, contrasena } = req.body;
+            if (!correo || !contrasena) {
+                throw new Error("Correo y contraseña son obligatorios");
+            }
+
+            const usuario = await UsuarioService.login(correo, contrasena);
+            res.status(200).json(usuario);
+        } catch (error) {
+            res.status(401).json({ message: error.message });
         }
     }
 }

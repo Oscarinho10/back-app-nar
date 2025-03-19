@@ -4,9 +4,9 @@ class Validaciones {
     }
 
     validarRFC(rfc) {
-        let regexRFC = /^[A-ZÑ]{4}[0-9]{6}[A-Z0-9]{3}$/;
+        let regexRFC = /^[A-ZÑ]{4}\d{6}[A-Z0-9]{3}$/;
         if (!regexRFC.test(rfc)) {
-            throw new Error('El RFC no tiene el formato correcto')
+            throw new Error('El RFC no tiene el formato correcto');
         }
     }
 

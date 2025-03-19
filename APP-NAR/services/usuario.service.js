@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const UsuarioRepository = require("../repositories/usuario.repository");
 const Validaciones = require("../utils/validation");
 const Utils = require("../utils/utils");
@@ -39,59 +40,44 @@ class AseguradoraService {
             throw new Error('Todos los campos son requeridos');
         }
 
-        // Validar el rol permitido
-        // const rolesPermitidos = ["administrador", "postulante", "agente"];
-        // if (!rolesPermitidos.includes(usuario.rol.toLowerCase())) {
-        //     throw new Error('El rol debe ser "administrador", "postulante" o "agente"');
-        // }
-
-        //Validar que el formato del RFC y el correo sea válido
-        // Validaciones.validarRFC(persona.rfc);
-
+        // Validar el formato de CURP, RFC, correo y contraseña
         Validaciones.validarCURP(usuario.curp);
-
         Validaciones.validarRFC(usuario.rfc);
-
         Validaciones.validarCorreo(usuario.correo);
-
         Validaciones.validarContrasena(usuario.contrasena);
 
-        //Validar  que el RFC no exista en la base de datos
+        // Validar que el RFC, CURP, correo, y teléfono no existan en la base de datos
         const usuarioByCURP = await UsuarioRepository.getUsuarioByCURP(usuario.curp);
-
         const usuarioByRFC = await UsuarioRepository.getUsuarioByRFC(usuario.rfc);
-
         const usuarioByCorreo = await UsuarioRepository.getUsuarioByCorreo(usuario.correo);
-
-        //Validar  que el correo no exista en la base de datos
         const usuarioByTelefono = await UsuarioRepository.getUsuarioByTelefono(usuario.telefono);
 
         if (usuarioByCURP) {
             throw new Error('La CURP ya existe');
         }
-
         if (usuarioByRFC) {
             throw new Error('El RFC ya existe');
-
         }
-
         if (usuarioByCorreo) {
             throw new Error('El correo ya existe');
-
         }
-
         if (usuarioByTelefono) {
             throw new Error('El telefono ya existe');
-
         }
 
+        // Encriptar la contraseña antes de guardarla
+        const salt = await bcrypt.genSalt(10); // 10 es el número de rondas de salt
+        const contrasenaEncriptada = await bcrypt.hash(usuario.contrasena, salt);
+
+        // Asignar la contraseña encriptada
+        usuario.contrasena = contrasenaEncriptada;
+
+        // Asignar el rol, fecha de registro y estado
         usuario.rol = "postulate";
-
         usuario.fechaRegistro = new Date();
+        usuario.estado = "activo"; // Por defecto, estado activo
 
-        // Asegurar que el estado sea "activo" por defecto
-        usuario.estado = "activo";
-
+        // Guardar el usuario en la base de datos
         return await UsuarioRepository.createUsuario(usuario);
     }
 
@@ -101,59 +87,44 @@ class AseguradoraService {
             throw new Error('Todos los campos son requeridos');
         }
 
-        // Validar el rol permitido
-        // const rolesPermitidos = ["administrador", "postulante", "agente"];
-        // if (!rolesPermitidos.includes(usuario.rol.toLowerCase())) {
-        //     throw new Error('El rol debe ser "administrador", "postulante" o "agente"');
-        // }
-
-        //Validar que el formato del RFC y el correo sea válido
-        // Validaciones.validarRFC(persona.rfc);
-
+        // Validar el formato de CURP, RFC, correo y contraseña
         Validaciones.validarCURP(usuario.curp);
-
         Validaciones.validarRFC(usuario.rfc);
-
         Validaciones.validarCorreo(usuario.correo);
-
         Validaciones.validarContrasena(usuario.contrasena);
 
-        //Validar  que el RFC no exista en la base de datos
+        // Validar que el RFC, CURP, correo, y teléfono no existan en la base de datos
         const usuarioByCURP = await UsuarioRepository.getUsuarioByCURP(usuario.curp);
-
         const usuarioByRFC = await UsuarioRepository.getUsuarioByRFC(usuario.rfc);
-
         const usuarioByCorreo = await UsuarioRepository.getUsuarioByCorreo(usuario.correo);
-
-        //Validar  que el correo no exista en la base de datos
         const usuarioByTelefono = await UsuarioRepository.getUsuarioByTelefono(usuario.telefono);
 
         if (usuarioByCURP) {
             throw new Error('La CURP ya existe');
         }
-
         if (usuarioByRFC) {
             throw new Error('El RFC ya existe');
-
         }
-
         if (usuarioByCorreo) {
             throw new Error('El correo ya existe');
-
         }
-
         if (usuarioByTelefono) {
             throw new Error('El telefono ya existe');
-
         }
 
+        // Encriptar la contraseña antes de guardarla
+        const salt = await bcrypt.genSalt(10); // 10 es el número de rondas de salt
+        const contrasenaEncriptada = await bcrypt.hash(usuario.contrasena, salt);
+
+        // Asignar la contraseña encriptada
+        usuario.contrasena = contrasenaEncriptada;
+
+        // Asignar el rol, fecha de registro y estado
         usuario.rol = "agente";
-
         usuario.fechaRegistro = new Date();
+        usuario.estado = "activo"; // Por defecto, estado activo
 
-        // Asegurar que el estado sea "activo" por defecto
-        usuario.estado = "activo";
-
+        // Guardar el usuario en la base de datos
         return await UsuarioRepository.createUsuario(usuario);
     }
 
@@ -163,59 +134,44 @@ class AseguradoraService {
             throw new Error('Todos los campos son requeridos');
         }
 
-        // Validar el rol permitido
-        // const rolesPermitidos = ["administrador", "postulante", "agente"];
-        // if (!rolesPermitidos.includes(usuario.rol.toLowerCase())) {
-        //     throw new Error('El rol debe ser "administrador", "postulante" o "agente"');
-        // }
-
-        //Validar que el formato del RFC y el correo sea válido
-        // Validaciones.validarRFC(persona.rfc);
-
+        // Validar el formato de CURP, RFC, correo y contraseña
         Validaciones.validarCURP(usuario.curp);
-
         Validaciones.validarRFC(usuario.rfc);
-
         Validaciones.validarCorreo(usuario.correo);
-
         Validaciones.validarContrasena(usuario.contrasena);
 
-        //Validar  que el RFC no exista en la base de datos
+        // Validar que el RFC, CURP, correo, y teléfono no existan en la base de datos
         const usuarioByCURP = await UsuarioRepository.getUsuarioByCURP(usuario.curp);
-
         const usuarioByRFC = await UsuarioRepository.getUsuarioByRFC(usuario.rfc);
-
         const usuarioByCorreo = await UsuarioRepository.getUsuarioByCorreo(usuario.correo);
-
-        //Validar  que el correo no exista en la base de datos
         const usuarioByTelefono = await UsuarioRepository.getUsuarioByTelefono(usuario.telefono);
 
         if (usuarioByCURP) {
             throw new Error('La CURP ya existe');
         }
-
         if (usuarioByRFC) {
             throw new Error('El RFC ya existe');
-
         }
-
         if (usuarioByCorreo) {
             throw new Error('El correo ya existe');
-
         }
-
         if (usuarioByTelefono) {
             throw new Error('El telefono ya existe');
-
         }
 
+        // Encriptar la contraseña antes de guardarla
+        const salt = await bcrypt.genSalt(10); // 10 es el número de rondas de salt
+        const contrasenaEncriptada = await bcrypt.hash(usuario.contrasena, salt);
+
+        // Asignar la contraseña encriptada
+        usuario.contrasena = contrasenaEncriptada;
+
+        // Asignar el rol, fecha de registro y estado
         usuario.rol = "administrador";
-
         usuario.fechaRegistro = new Date();
+        usuario.estado = "activo"; // Por defecto, estado activo
 
-        // Asegurar que el estado sea "activo" por defecto
-        usuario.estado = "activo";
-
+        // Guardar el usuario en la base de datos
         return await UsuarioRepository.createUsuario(usuario);
     }
 
@@ -287,6 +243,28 @@ class AseguradoraService {
         }
         return await UsuarioRepository.updateUsuarioStatusActive(id)
 
+    }
+
+    async login(correo, contrasena) {
+        // Validar que los campos no estén vacíos
+        if (!correo || !contrasena) {
+            throw new Error("Correo y contraseña son obligatorios");
+        }
+
+        // Buscar usuario por correo
+        const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
+        if (!usuario) {
+            throw new Error("Correo o contraseña incorrectos");
+        }
+
+        // Comparar contraseñas
+        const esPasswordValido = await bcrypt.compare(contrasena, usuario.contrasena);
+        if (!esPasswordValido) {
+            throw new Error("Correo o contraseña incorrectos");
+        }
+
+        // Retornar usuario si la autenticación es correcta
+        return usuario;
     }
 
 

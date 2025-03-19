@@ -84,6 +84,7 @@ class UsuarioRepository {
         // new: true -> devuelve el producto actualizado
         return await Usuario.findByIdAndUpdate(id, { estado: 'activo' }, { new: true });
     }
+
 }
 
 module.exports = new UsuarioRepository();
