@@ -10,6 +10,10 @@ class UsuarioRepository {
         return await Usuario.find({ estado: 'activo' }); // Retorna solo seguros activos
     }
 
+    async getAllUsuariosInactivos() {
+        return await Usuario.find({ estado: 'inactivo' }); // Retorna solo seguros activos
+    }
+
     // Obtener aseguradora por ID
     async getUsuarioById(id) {
         return await Usuario.findById(id);

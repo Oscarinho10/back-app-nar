@@ -10,6 +10,10 @@ class AseguradoraRepository {
         return await Aseguradora.find({ estado: 'activo' }); // Retorna solo seguros activos
     }
 
+    async getAllAseguradorasInactivas() {
+        return await Aseguradora.find({ estado: 'inactivo' }); // Retorna solo seguros activos
+    }
+
     // Obtener aseguradora por ID
     async getAseguradoraById(id) {
         return await Aseguradora.findById(id);

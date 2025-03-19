@@ -11,6 +11,10 @@ class AseguradoraService {
         return await UsuarioRepository.getAllUsuariosActivos();
     }
 
+    async getAllUsuariosInactivos() {
+        return await UsuarioRepository.getAllUsuariosInactivos();
+    }
+
     async getUsuarioById(id) {
         const usuario = await UsuarioRepository.getUsuarioById(id);
         if (!usuario) {

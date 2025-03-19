@@ -23,6 +23,17 @@ class UsuarioController {
         }
     }
 
+    async getAllUsuariosInactivos(req, res) {
+        try {
+            const usuarios = await UsuarioService.getAllUsuariosInactivos();
+            // Por defecto siempre retorna 200 si no se le especifica el status
+            // 200 -> éxito | OK 
+            res.status(200).json(usuarios);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async getUsuarioById(req, res) {
         try {
             //Validar que el Id venga en la petición

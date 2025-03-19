@@ -4,7 +4,8 @@ const UsuarioController = require("../controllers/usuario.controller");
 const router = express.Router();
 
 router.get('/', UsuarioController.getAllUsuarios);
-router.get('/activos', UsuarioController.getAllUsuariosActivos)
+router.get('/activos', UsuarioController.getAllUsuariosActivos);
+router.get('/inactivos', UsuarioController.getAllUsuariosInactivos);
 router.get('/id/:id', UsuarioController.getUsuarioById);
 router.get('/nombre/:nombre', UsuarioController.getUsuariosByNombre);
 router.post('/postulante', UsuarioController.createUsuarioPostulante);
