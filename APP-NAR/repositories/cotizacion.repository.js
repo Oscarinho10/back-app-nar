@@ -47,6 +47,24 @@ class CotizacionRepository {
         return await Cotizacion.findByIdAndUpdate(id, { estado: 'emitida' }, { new: true });
     }
 
+    async getCotizacionByIdUsuario(idUsuario) {
+        return await Cotizacion.find({ idUsuario: idUsuario });
+    }
+
+    // Obtener cotizaciones por idCliente
+    async getCotizacionByIdCliente(idCliente) {
+        return await Cotizacion.find({ idCliente: idCliente });
+    }
+
+    // Obtener cotizaciones por idAsegurado
+    async getCotizacionByIdAsegurado(idAsegurado) {
+        return await Cotizacion.find({ idAsegurado: idAsegurado });
+    }
+
+    // Obtener cotizaciones por idSeguro
+    async getCotizacionByIdSeguro(idSeguro) {
+        return await Cotizacion.find({ idSeguro: idSeguro });
+    }
 }
 
 module.exports = new CotizacionRepository();

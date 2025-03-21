@@ -111,6 +111,22 @@ class CotizacionService {
         return await CotizacionRepository.updateCotizacionStatusEmitida(id)
 
     }
+
+    async getCotizacionByIdUsuario(idUsuario) {
+        return await CotizacionRepository.getCotizacionByIdUsuario(idUsuario);
+    }
+
+    async getCotizacionByIdCliente(idCliente) {
+        return await CotizacionRepository.getCotizacionByIdCliente(idCliente);
+    }
+
+    async getCotizacionByIdAsegurado(idAsegurado) {
+        return await CotizacionRepository.getCotizacionByIdAsegurado(idAsegurado);
+    }
+
+    async getCotizacionByIdSeguro(idSeguro) {
+        return await CotizacionRepository.getCotizacionByIdSeguro(idSeguro);
+    }
 }
 
 module.exports = new CotizacionService();

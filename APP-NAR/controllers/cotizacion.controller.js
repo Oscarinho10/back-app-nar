@@ -69,6 +69,58 @@ class CotizacionController {
             res.status(400).json({ message: error.message });
         }
     }
+
+    async getCotizacionByIdUsuario(req, res) {
+        try {
+            const idUsuario = req.params.idUsuario;
+            if (!idUsuario) {
+                throw new Error('El Id de usuario es requerido');
+            }
+            const cotizaciones = await CotizacionService.getCotizacionByIdUsuario(idUsuario);
+            res.status(200).json(cotizaciones);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getCotizacionByIdCliente(req, res) {
+        try {
+            const idCliente = req.params.idCliente;
+            if (!idCliente) {
+                throw new Error('El Id de cliente es requerido');
+            }
+            const cotizaciones = await CotizacionService.getCotizacionByIdCliente(idCliente);
+            res.status(200).json(cotizaciones);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getCotizacionByIdAsegurado(req, res) {
+        try {
+            const idAsegurado = req.params.idAsegurado;
+            if (!idAsegurado) {
+                throw new Error('El Id de asegurado es requerido');
+            }
+            const cotizaciones = await CotizacionService.getCotizacionByIdAsegurado(idAsegurado);
+            res.status(200).json(cotizaciones);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getCotizacionByIdSeguro(req, res) {
+        try {
+            const idSeguro = req.params.idSeguro;
+            if (!idSeguro) {
+                throw new Error('El Id de seguro es requerido');
+            }
+            const cotizaciones = await CotizacionService.getCotizacionByIdSeguro(idSeguro);
+            res.status(200).json(cotizaciones);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
 }
 
 module.exports = new CotizacionController();
