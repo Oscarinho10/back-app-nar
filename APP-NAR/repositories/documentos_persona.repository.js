@@ -33,7 +33,7 @@ class DocumentosPersonaRepository {
     }
 
     // Obtener los documentos de una persona por su ID
-    async getDocumentosPersonaByIdPersona(idUsuario) {
+    async getDocumentosPersonaById(idUsuario) {
         try {
             return await DocumentosPersona.find({ idUsuario: idUsuario });
         } catch (error) {

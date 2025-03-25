@@ -39,12 +39,12 @@ class DocumentosPersonaService {
         }
 
         // Validar que el usuario exista
-        const usuario = await PersonaRepository.getPersonaById(idUsuario);
+        const usuario = await PersonaRepository.getUsuarioById(idUsuario);
         if (!usuario) {
             throw new Error(`El usuario con ID ${idUsuario} no existe`);
         }
 
-        return await DocumentosPersonaRepository.getDocumentosPersonaByIdPersona(idUsuario);
+        return await DocumentosPersonaRepository.getDocumentosPersonaById(idUsuario);
     }
 }
 

@@ -9,9 +9,11 @@ const UsuarioSchema = mongoose.Schema({
     correo: { type: String, required: true, unique: true },
     contrasena: { type: String, required: true },
     telefono: { type: String, required: true, unique: true },
-    rol: { type: String, required: true},
-    fechaRegistro: { type: Date, default: Date.now },    
-    estado: {type: String, required: true, default: "activo"}
-})
+    rol: { type: String, required: true },
+    fechaRegistro: { type: Date, default: Date.now },
+    estado: { type: String, required: true, default: "activo" },
+    codigoRecuperacion: { type: String, default: null }, // Código para recuperar contraseña
+    expiracionCodigo: { type: Date, default: null }     // Fecha de expiración del código
+});
 
 module.exports = mongoose.model('Usuario', UsuarioSchema);

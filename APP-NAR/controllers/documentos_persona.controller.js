@@ -99,7 +99,7 @@ class DocumentosPersonaController {
 
     async getDocumentosPersonaById(req, res) {
         try {
-            const idUsuario = req.params.idUsuario;
+            const idUsuario = req.params.id;
             if (!idUsuario || idUsuario == '' || idUsuario == null || idUsuario == undefined) {
                 throw new Error('El id del usuario es requerido');
             }

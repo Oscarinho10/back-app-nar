@@ -138,6 +138,67 @@ class UsuarioController {
             res.status(401).json({ message: error.message });
         }
     }
+
+    async generarCodigoRecuperacion(req, res) {
+        try {
+            const { correo } = req.body;
+            if (!correo) {
+                throw new Error("El correo es obligatorio para generar un código de recuperación.");
+            }
+
+            const resultado = await UsuarioService.generarCodigoRecuperacion(correo);
+            res.status(200).json({
+                success: true,
+                message: "Código de recuperación generado correctamente.",
+                data: resultado,
+            });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    /**
+     * Validar un código de recuperación.
+     */
+    async validarCodigoRecuperacion(req, res) {
+        try {
+            const { correo, codigoRecuperacion } = req.body;
+            if (!correo || !codigoRecuperacion) {
+                throw new Error("El correo del usuario y el código de recuperación son obligatorios.");
+            }
+
+            const usuario = await UsuarioService.validarCodigoRecuperacion(correo, codigoRecuperacion);
+            res.status(200).json({
+                success: true,
+                message: "El código de recuperación es válido.",
+                data: usuario,
+            });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    /**
+     * Cambiar la contraseña tras validar el código de recuperación.
+     */
+    async cambiarContrasena(req, res) {
+        try {
+            const { correo, codigoRecuperacion, nuevaContrasena } = req.body;
+
+            if (!correo || !codigoRecuperacion || !nuevaContrasena) {
+                throw new Error("El correo, el código de recuperación y la nueva contraseña son obligatorios.");
+            }
+
+            const usuario = await UsuarioService.recuperarContrasenaConCodigo(correo, codigoRecuperacion, nuevaContrasena);
+            res.status(200).json({
+                success: true,
+                message: "Contraseña actualizada correctamente.",
+                data: usuario,
+            });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
 }
 
 module.exports = new UsuarioController();

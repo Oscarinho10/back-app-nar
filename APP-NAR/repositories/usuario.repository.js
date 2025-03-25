@@ -1,45 +1,45 @@
 const Usuario = require('../models/usuario.model');
 
 class UsuarioRepository {
-    // Obtener todas las aseguradoras
+    // Obtener todos los usuarios
     async getAllUsuarios() {
         return await Usuario.find();
     }
 
     async getAllUsuariosActivos() {
-        return await Usuario.find({ estado: 'activo' }); // Retorna solo seguros activos
+        return await Usuario.find({ estado: 'activo' }); // Retorna solo usuarios activos
     }
 
     async getAllUsuariosInactivos() {
-        return await Usuario.find({ estado: 'inactivo' }); // Retorna solo seguros activos
+        return await Usuario.find({ estado: 'inactivo' }); // Retorna solo usuarios inactivos
     }
 
-    // Obtener aseguradora por ID
+    // Obtener usuario por ID
     async getUsuarioById(id) {
         return await Usuario.findById(id);
     }
 
-    // Crear una nueva aseguradora
+    // Crear un nuevo usuario
     async createUsuario(usuario) {
         return await Usuario.create(usuario);
     }
 
-    // Actualizar aseguradora
+    // Actualizar usuario
     async updateUsuario(id, usuario) {
         return await Usuario.findByIdAndUpdate(id, usuario, { new: true });
     }
 
-    // Habilitar o deshabilitar aseguradora
+    // Habilitar o deshabilitar usuario
     async toggleEstadoUsuario(id, estado) {
         return await Usuario.findByIdAndUpdate(id, { estado: estado }, { new: true });
     }
 
-    // Buscar aseguradoras por nombre
+    // Buscar usuarios por nombre
     async getUsuariosByNombre(nombre) {
         return await Usuario.find({ nombre: new RegExp(nombre, 'i') });
     }
 
-    // Buscar aseguradora por correo de contacto
+    // Buscar usuario por correo
     async getUsuarioByCorreo(correo) {
         return await Usuario.findOne({ correo: correo });
     }
@@ -52,12 +52,12 @@ class UsuarioRepository {
         return await Usuario.findOne({ rfc: rfc });
     }
 
-    // Buscar aseguradora por teléfono de contacto
+    // Buscar usuario por teléfono
     async getUsuarioByTelefono(telefono) {
         return await Usuario.findOne({ telefono: telefono });
     }
 
-    // Verificar si existe otro correo en otra aseguradora
+    // Verificar si existe otro correo en otro usuario
     async getUsuarioByCorreoAndNotId(id, correo) {
         return await Usuario.findOne({ _id: { $ne: id }, correo: correo });
     }
@@ -70,21 +70,49 @@ class UsuarioRepository {
         return await Usuario.findOne({ _id: { $ne: id }, rfc: rfc });
     }
 
-    // Verificar si existe otro teléfono en otra aseguradora
+    // Verificar si existe otro teléfono en otro usuario
     async getUsuarioByTelefonoAndNotId(id, telefono) {
         return await Usuario.findOne({ _id: { $ne: id }, telefono: telefono });
     }
 
     async updateUsuarioStatusInactive(id) {
-        // new: true -> devuelve el producto actualizado
         return await Usuario.findByIdAndUpdate(id, { estado: 'inactivo' }, { new: true });
     }
 
     async updateUsuarioStatusActive(id) {
-        // new: true -> devuelve el producto actualizado
         return await Usuario.findByIdAndUpdate(id, { estado: 'activo' }, { new: true });
     }
 
+    // Asignar un código de recuperación y fecha de expiración
+    async setRecoveryCode(id, codigoRecuperacion, expiracion) {
+        return await Usuario.findByIdAndUpdate(
+            id,
+            { 
+                codigoRecuperacion: codigoRecuperacion, 
+                expiracionCodigo: expiracion 
+            },
+            { new: true }
+        );
+    }
+
+    // Validar el código de recuperación
+    async validateRecoveryCode(correo, codigoRecuperacion) {
+        const usuario = await Usuario.findOne({ 
+            correo: correo, 
+            codigoRecuperacion: codigoRecuperacion 
+        });
+
+        if (!usuario) {
+            throw new Error('Código de recuperación no válido.');
+        }
+
+        const now = new Date();
+        if (now > usuario.expiracionCodigo) {
+            throw new Error('El código de recuperación ha expirado.');
+        }
+
+        return usuario;
+    }
 }
 
 module.exports = new UsuarioRepository();

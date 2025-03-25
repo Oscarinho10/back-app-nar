@@ -3,7 +3,7 @@ const UsuarioRepository = require("../repositories/usuario.repository");
 const Validaciones = require("../utils/validation");
 const Utils = require("../utils/utils");
 
-class AseguradoraService {
+class UsuarioService {
     async getAllUsuarios() {
         return await UsuarioRepository.getAllUsuarios();
     }
@@ -267,7 +267,78 @@ class AseguradoraService {
         return usuario;
     }
 
+    async generarCodigoRecuperacion(correo) {
+        // Validar que el correo no esté vacío
+        if (!correo) {
+            throw new Error("El correo es obligatorio");
+        }
 
+        // Validar formato del correo
+        Validaciones.validarCorreo(correo);
+
+        // Buscar usuario por correo
+        const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
+        if (!usuario) {
+            throw new Error("No se encontró un usuario con este correo");
+        }
+
+        // Generar un código único de recuperación
+        const codigoRecuperacion = Utils.generarCodigoRecuperacion(); // Ejemplo: 6 dígitos numéricos
+        const expiracion = new Date(Date.now() + 15 * 60 * 1000); // Expira en 15 minutos
+
+        // Guardar el código y la expiración en la base de datos
+        await UsuarioRepository.setRecoveryCode(usuario._id, codigoRecuperacion, expiracion);
+
+        // Retornar el código (en producción, enviar por correo en lugar de devolverlo)
+        return codigoRecuperacion;
+    }
+
+    // Validar un código de recuperación
+    async validarCodigoRecuperacion(correo, codigo) {
+        // Validar que los campos no estén vacíos
+        if (!correo || !codigo) {
+            throw new Error("Correo y código son obligatorios");
+        }
+
+        // Validar formato del correo
+        Validaciones.validarCorreo(correo);
+
+        // Buscar usuario por correo
+        const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
+        if (!usuario) {
+            throw new Error("No se encontró un usuario con este correo");
+        }
+
+        // Validar el código de recuperación usando el repository
+        await UsuarioRepository.validateRecoveryCode(usuario.correo, codigo);
+
+        // Si es válido, retornar éxito
+        return true;
+    }
+
+    // Cambiar la contraseña utilizando un código de recuperación
+    async recuperarContrasenaConCodigo(correo, codigo, nuevaContrasena) {
+        // Validar el código de recuperación
+        await this.validarCodigoRecuperacion(correo, codigo);
+
+        // Validar la nueva contraseña
+        Validaciones.validarContrasena(nuevaContrasena);
+
+        // Encriptar la nueva contraseña
+        const salt = await bcrypt.genSalt(10);
+        const contrasenaEncriptada = await bcrypt.hash(nuevaContrasena, salt);
+
+        // Buscar usuario por correo
+        const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
+
+        // Actualizar la contraseña del usuario
+        await UsuarioRepository.updateUsuario(usuario._id, { contrasena: contrasenaEncriptada });
+
+        // Limpiar el código de recuperación y su expiración
+        await UsuarioRepository.setRecoveryCode(usuario._id, null, null);
+
+        return "Contraseña actualizada correctamente";
+    }
 }
 
-module.exports = new AseguradoraService();
+module.exports = new UsuarioService();
