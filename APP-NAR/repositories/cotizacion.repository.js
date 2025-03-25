@@ -4,7 +4,6 @@ const Seguro = require('../models/seguro.model');
 const Usuario = require('../models/usuario.model');
 const Cliente = require('../models/cliente.model');
 
-
 class CotizacionRepository {
     async getAllCotizaciones() {
         return await Cotizacion.find();
