@@ -139,6 +139,27 @@ class UsuarioController {
         }
     }
 
+    async loginAgente(req, res) {
+        try {
+            const { correo, contrasena } = req.body;
+    
+            // Validar que los campos no estén vacíos
+            if (!correo || !contrasena) {
+                return res.status(400).json({ message: "Correo y contraseña son obligatorios" });
+            }
+    
+            // Llamar al servicio para login de postulante
+            const usuario = await UsuarioService.loginAgente(correo, contrasena);
+    
+            // Respuesta en caso de éxito
+            res.status(200).json(usuario);
+        } catch (error) {
+            const statusCode = error.message.includes("obligatorios") ? 400 : 401;
+            res.status(statusCode).json({ message: error.message });
+        }
+    }
+    
+
     async generarCodigoRecuperacion(req, res) {
         try {
             const { correo } = req.body;

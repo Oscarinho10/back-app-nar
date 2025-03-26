@@ -267,6 +267,33 @@ class UsuarioService {
         return usuario;
     }
 
+    async loginAgente(correo, contrasena) {
+        // Validar campos obligatorios
+        if (!correo || !contrasena) {
+            throw new Error("Correo y contraseña son obligatorios");
+        }
+    
+        // Buscar usuario por correo
+        const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
+        if (!usuario) {
+            throw new Error("Correo o contraseña incorrectos");
+        }
+    
+        // Comparar contraseñas
+        const esPasswordValido = await bcrypt.compare(contrasena, usuario.contrasena);
+        if (!esPasswordValido) {
+            throw new Error("Correo o contraseña incorrectos");
+        }
+    
+        // Verificar si el rol del usuario es "postulante"
+        if (usuario.rol !== "agente") {
+            throw new Error("Acceso denegado. Solo los usuarios con el rol de 'agente' pueden iniciar sesión.");
+        }
+    
+        return usuario;
+    }
+    
+
     async generarCodigoRecuperacion(correo) {
         // Validar que el correo no esté vacío
         if (!correo) {
