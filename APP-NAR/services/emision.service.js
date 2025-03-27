@@ -17,7 +17,7 @@ class EmisionService {
 
     async createEmision(emision) {
         // Validar campos obligatorios
-        if (!emision.idUsuario || !emision.idCliente || !emision.idAsegurado || 
+        if (!emision.idUsuario || !emision.idCliente || !emision.idAsegurado ||
             !emision.idSeguro || !emision.idCotizacion) {
             throw new Error('Todos los campos son requeridos');
         }
@@ -46,14 +46,18 @@ class EmisionService {
         // Marcar cotización como emitida
         await Utils.updateCotizacionStatusEmitida(emision.idCotizacion);
 
+        // Asignar el precio final de la cotización al monto total de la emisión
+        emision.montoTotal = cotizacion.precioFinal;
+
         // Registrar la emisión
         emision.fechaEmision = new Date();
         return await EmisionRepository.createEmision(emision);
     }
 
+
     async updateEmision(id, emision) {
         // Validar campos obligatorios
-        if (!emision.idUsuario || !emision.idCliente || !emision.idAsegurado || 
+        if (!emision.idUsuario || !emision.idCliente || !emision.idAsegurado ||
             !emision.idSeguro || !emision.idCotizacion) {
             throw new Error('Todos los campos son requeridos');
         }
