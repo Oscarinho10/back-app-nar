@@ -37,6 +37,20 @@ class SeguroController {
         }
     }
 
+    async getAseguradoraById(req, res) {
+        try {
+            //Validar que el Id venga en la petición
+            const aseguradoraId = req.params.id;
+            if (!aseguradoraId || aseguradoraId == '' || aseguradoraId == null || aseguradoraId == undefined) {
+                throw new Error('El Id de la aseguradora es requerido');
+            }
+            const aseguradora = await SeguroService.getAseguradoraById(aseguradoraId);
+            res.json(aseguradora);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async createSeguro(req, res) {
         try {
             const seguro = await SeguroService.createSeguro(req.body);

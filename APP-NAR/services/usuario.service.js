@@ -73,7 +73,7 @@ class UsuarioService {
         usuario.contrasena = contrasenaEncriptada;
 
         // Asignar el rol, fecha de registro y estado
-        usuario.rol = "postulate";
+        usuario.rol = "postulante";
         usuario.fechaRegistro = new Date();
         usuario.estado = "activo"; // Por defecto, estado activo
 

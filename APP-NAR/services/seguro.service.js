@@ -19,6 +19,15 @@ class SeguroService {
         return seguro;
     }
 
+    async getAseguradoraById(id) {
+        const aseguradora = await SeguroRepository.getAseguradoraById(id);
+        if (!aseguradora) {
+            throw new Error('Aseguradora no encontrada');
+        }
+
+        return aseguradora;
+    }
+
     async getSegurosByTipo(tipo) {
         return await SeguroRepository.getSegurosByTipo(tipo) || [];
     }
