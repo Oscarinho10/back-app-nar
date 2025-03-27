@@ -225,6 +225,47 @@ class UsuarioService {
 
     }
 
+    async updateUsuarioByAdmin(id, usuario) {
+        // Validar que la persona exista
+        const usuarioById = await UsuarioRepository.getUsuarioById(id);
+        if (!usuarioById) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        // Validar que los campos permitidos vengan en el body
+        if (!usuario.nombre || !usuario.apellidoPaterno || !usuario.apellidoMaterno || !usuario.telefono || !usuario.correo) {
+            throw new Error('Los campos nombre, apellido paterno, apellido materno, telefono y correo son requeridos');
+        }
+
+        // Validar que no se intenten modificar campos no permitidos
+        if (usuario.curp || usuario.rfc || usuario.contrasena || usuario.rol) {
+            throw new Error('No se puede modificar CURP, RFC, contraseña ni rol');
+        }
+
+        // Validar el correo
+        Validaciones.validarCorreo(usuario.correo);
+
+        // Validar teléfono (puedes agregar validación específica si es necesario)
+        if (!usuario.telefono) {
+            throw new Error('Teléfono es obligatorio');
+        }
+
+        // Validar que no haya otro usuario con el mismo correo o teléfono
+        const usuarioByCorreoAndNotId = await UsuarioRepository.getUsuarioByCorreoAndNotId(id, usuario.correo);
+        if (usuarioByCorreoAndNotId) {
+            throw new Error('El correo ya existe');
+        }
+
+        const usuarioByTelefonoAndNotId = await UsuarioRepository.getUsuarioByTelefonoAndNotId(id, usuario.telefono);
+        if (usuarioByTelefonoAndNotId) {
+            throw new Error('El teléfono ya existe');
+        }
+
+        // Actualizar el usuario
+        return await UsuarioRepository.updateUsuario(id, usuario);
+    }
+
+
     async updateUsuarioStatusInactive(id) {
         //Validar que la aseguradora exista
         const usuario = await UsuarioRepository.getUsuarioById(id);

@@ -92,6 +92,21 @@ class UsuarioController {
         }
     }
 
+    async updateUsuarioByAdmin(req, res) {
+        try {
+            const usuarioId = req.params.id;
+            if (!usuarioId || usuarioId == '' || usuarioId == null || usuarioId == undefined) {
+                throw new Error('El Id del usuario es requerido');
+            }
+
+            // Llamar a la función updateUsuarioByAdmin desde el servicio
+            const usuario = await UsuarioService.updateUsuarioByAdmin(usuarioId, req.body);
+            res.json(usuario);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async updateUsuarioStatusInactive(req, res) {
         try {
             const usuarioId = req.params.id;
@@ -151,15 +166,15 @@ class UsuarioController {
     async loginAgente(req, res) {
         try {
             const { correo, contrasena } = req.body;
-    
+
             // Validar que los campos no estén vacíos
             if (!correo || !contrasena) {
                 return res.status(400).json({ message: "Correo y contraseña son obligatorios" });
             }
-    
+
             // Llamar al servicio para login de postulante
             const usuario = await UsuarioService.loginAgente(correo, contrasena);
-    
+
             // Respuesta en caso de éxito
             res.status(200).json(usuario);
         } catch (error) {
@@ -167,7 +182,7 @@ class UsuarioController {
             res.status(statusCode).json({ message: error.message });
         }
     }
-    
+
 
     async generarCodigoRecuperacion(req, res) {
         try {
