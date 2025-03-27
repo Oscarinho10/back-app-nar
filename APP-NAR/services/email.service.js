@@ -14,7 +14,7 @@ class EmailService {
     // Método para enviar correo
     async enviarCorreo(destinatario, asunto, mensaje) {
         const opcionesCorreo = {
-            from: `"Multiaseguradoras" multiaseguradoranar@gmail.com`,  // Asegúrate de poner el correo aquí también
+            from: `"Multi aseguradora NAR" multiaseguradoranar@gmail.com`, 
             to: destinatario,
             subject: asunto,
             text: mensaje,
