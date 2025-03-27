@@ -357,7 +357,6 @@ class UsuarioService {
 
 
     async generarCodigoRecuperacion(correo) {
-        // Validar que el correo no esté vacío
         if (!correo) {
             throw new Error("El correo es obligatorio");
         }
@@ -378,18 +377,15 @@ class UsuarioService {
         // Guardar el código y la expiración en la base de datos
         await UsuarioRepository.setRecoveryCode(usuario._id, codigoRecuperacion, expiracion);
 
-        // Retornar el código (en producción, enviar por correo en lugar de devolverlo)
-        return codigoRecuperacion;
+        return { codigoRecuperacion };  // Retorna el código generado
     }
 
-    // Validar un código de recuperación
     async validarCodigoRecuperacion(correo, codigo) {
-        // Validar que los campos no estén vacíos
         if (!correo || !codigo) {
             throw new Error("Correo y código son obligatorios");
         }
 
-        // Validar formato del correo
+        // Validar el correo
         Validaciones.validarCorreo(correo);
 
         // Buscar usuario por correo
@@ -401,11 +397,9 @@ class UsuarioService {
         // Validar el código de recuperación usando el repository
         await UsuarioRepository.validateRecoveryCode(usuario.correo, codigo);
 
-        // Si es válido, retornar éxito
         return true;
     }
 
-    // Cambiar la contraseña utilizando un código de recuperación
     async recuperarContrasenaConCodigo(correo, codigo, nuevaContrasena) {
         // Validar el código de recuperación
         await this.validarCodigoRecuperacion(correo, codigo);

@@ -109,6 +109,20 @@ class EmisionController {
             res.status(400).json({ message: error.message });
         }
     }
+
+    async getSeguroById(req, res) {
+        try {
+            //Validar que el Id venga en la petición
+            const seguroId = req.params.id;
+            if (!seguroId || seguroId == '' || seguroId == null || seguroId == undefined) {
+                throw new Error('El Id del seguro es requerido');
+            }
+            const seguro = await EmisionService.getSeguroById(seguroId);
+            res.json(seguro);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
 }
 
 module.exports = new EmisionController();

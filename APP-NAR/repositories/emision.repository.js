@@ -64,6 +64,7 @@ class EmisionRepository {
     async getEmisionByIdCotizacion(idCotizacion) {
         return await Emision.find({ idCotizacion: idCotizacion });
     }
+
 }
 
 module.exports = new EmisionRepository();

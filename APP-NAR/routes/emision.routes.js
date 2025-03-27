@@ -10,6 +10,7 @@ router.get('/cliente/:idCliente', EmisionController.getEmisionByIdCliente);
 router.get('/asegurado/:idAsegurado', EmisionController.getEmisionByIdAsegurado);
 router.get('/seguro/:idSeguro', EmisionController.getEmisionByIdSeguro);
 router.get('/cotizacion/:idCotizacion', EmisionController.getEmisionByIdCotizacion);
+router.get('/seguroInfo/:id', EmisionController.getSeguroById);
 router.post('/', EmisionController.createEmision);
 router.put('/id/:id', EmisionController.updateEmision);
 

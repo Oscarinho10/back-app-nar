@@ -26,20 +26,17 @@ class ClienteService {
     }
 
     async createCliente(cliente) {
-        //Validar que todos los campos obligatorios vengan
+        // Validar que todos los campos obligatorios vengan
         if (!cliente.nombre || !cliente.apellidoPaterno || !cliente.apellidoMaterno || !cliente.fechaNacimiento || !cliente.correo || !cliente.rfc || !cliente.telefono) {
             throw new Error('Todos los campos son requeridos');
         }
 
-        //Validar que el formato del RFC y el correo sea válido
-        // Validaciones.validarRFC(persona.rfc);
-
+        // Validar el formato del correo y el RFC
         Validaciones.validarCorreo(cliente.correo);
-
         Validaciones.validarRFC(cliente.rfc);
 
+        // Verificar si ya existe el cliente por correo o RFC
         const clienteByCorreo = await ClienteRepository.getClienteByCorreo(cliente.correo);
-
         const clienteByRFC = await ClienteRepository.getClienteByRFC(cliente.rfc);
 
         if (clienteByCorreo) {
@@ -48,17 +45,18 @@ class ClienteService {
 
         if (clienteByRFC) {
             throw new Error('El RFC ya existe');
-
         }
 
-        //Validar que la fecha de nacimiento sea válida
-        if (Utils.calcularEdad(cliente.fechaNacimiento) < 18) {
-            throw new Error('La persona debe ser mayor de edad');
+        // Validar que la persona sea mayor de edad
+        const edad = Utils.calcularEdad(cliente.fechaNacimiento);
 
-        }
+        // Calcular la edad y agregarla al objeto cliente
+        cliente.edad = edad;
 
+        // Crear el cliente en la base de datos
         return await ClienteRepository.createCliente(cliente);
     }
+
 
 }
 

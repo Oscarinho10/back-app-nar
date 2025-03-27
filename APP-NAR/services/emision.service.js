@@ -1,5 +1,6 @@
 const EmisionRepository = require("../repositories/emision.repository");
 const UsuarioRepository = require("../repositories/usuario.repository");
+const SeguroRepository = require("../repositories/seguro.repository");
 const Validaciones = require("../utils/validation");
 const Utils = require("../utils/utils");
 
@@ -101,6 +102,14 @@ class EmisionService {
 
     async getEmisionByIdCotizacion(idCotizacion) {
         return await EmisionRepository.getEmisionByIdCotizacion(idCotizacion);
+    }
+
+    async getSeguroById(id) {
+        const seguro = await SeguroRepository.getSeguroById(id);
+        if (!seguro) {
+            throw new Error('Seguro no encontrado');
+        }
+        return seguro;
     }
 }
 

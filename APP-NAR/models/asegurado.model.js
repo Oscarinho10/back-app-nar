@@ -8,7 +8,8 @@ const AseguradoSchema = mongoose.Schema({
     correo: { type: String, required: true, unique: true },
     rfc: { type: String, required: true, unique: true },
     telefono: { type: String, required: true, unique: true },
-    idCliente: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', required: true }
+    idCliente: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', required: true },
+    edad: { type: Number, required: false } // Campo para la edad (no manual)
 })
 
 module.exports = mongoose.model('Asegurado', AseguradoSchema);

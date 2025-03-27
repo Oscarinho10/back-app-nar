@@ -51,7 +51,10 @@ class AseguradoService {
         }
 
         //Validar que la fecha de nacimiento sea válida
-        Utils.calcularEdad(asegurado.fechaNacimiento);
+        const edad = Utils.calcularEdad(asegurado.fechaNacimiento);
+
+        // Calcular la edad y agregarla al objeto cliente
+        asegurado.edad = edad;
 
         const cliente = await AseguradoRepository.getClienteById(asegurado.idCliente);
         if (!cliente) {
