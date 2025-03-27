@@ -241,8 +241,29 @@ class UsuarioService {
         if (!usuario) {
             throw new Error('Usuario no encontrado')
         }
+
+        // Incrementar el contador de reactivaciones
+        await UsuarioRepository.incrementReactivaciones(id);
+
         return await UsuarioRepository.updateUsuarioStatusActive(id)
 
+    }
+
+    async registrarEmision(id) {
+        const usuario = await UsuarioRepository.getUsuarioById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        // Verificar que el rol del usuario sea "agente"
+        if (usuario.rol !== "agente") {
+            throw new Error('Solo los agentes pueden registrar emisiones');
+        }
+
+        // Incrementar el contador de emisiones
+        await UsuarioRepository.incrementEmisiones(id);
+
+        return usuario;
     }
 
     async login(correo, contrasena) {
@@ -272,27 +293,27 @@ class UsuarioService {
         if (!correo || !contrasena) {
             throw new Error("Correo y contraseña son obligatorios");
         }
-    
+
         // Buscar usuario por correo
         const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
         if (!usuario) {
             throw new Error("Correo o contraseña incorrectos");
         }
-    
+
         // Comparar contraseñas
         const esPasswordValido = await bcrypt.compare(contrasena, usuario.contrasena);
         if (!esPasswordValido) {
             throw new Error("Correo o contraseña incorrectos");
         }
-    
+
         // Verificar si el rol del usuario es "postulante"
         if (usuario.rol !== "agente") {
             throw new Error("Acceso denegado. Solo los usuarios con el rol de 'agente' pueden iniciar sesión.");
         }
-    
+
         return usuario;
     }
-    
+
 
     async generarCodigoRecuperacion(correo) {
         // Validar que el correo no esté vacío

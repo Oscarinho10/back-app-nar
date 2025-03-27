@@ -87,9 +87,9 @@ class UsuarioRepository {
     async setRecoveryCode(id, codigoRecuperacion, expiracion) {
         return await Usuario.findByIdAndUpdate(
             id,
-            { 
-                codigoRecuperacion: codigoRecuperacion, 
-                expiracionCodigo: expiracion 
+            {
+                codigoRecuperacion: codigoRecuperacion,
+                expiracionCodigo: expiracion
             },
             { new: true }
         );
@@ -97,9 +97,9 @@ class UsuarioRepository {
 
     // Validar el código de recuperación
     async validateRecoveryCode(correo, codigoRecuperacion) {
-        const usuario = await Usuario.findOne({ 
-            correo: correo, 
-            codigoRecuperacion: codigoRecuperacion 
+        const usuario = await Usuario.findOne({
+            correo: correo,
+            codigoRecuperacion: codigoRecuperacion
         });
 
         if (!usuario) {
@@ -112,6 +112,14 @@ class UsuarioRepository {
         }
 
         return usuario;
+    }
+
+    async incrementReactivaciones(id) {
+        return await Usuario.findByIdAndUpdate(id, { $inc: { reactivaciones: 1 } }, { new: true });
+    }
+
+    async incrementEmisiones(id) {
+        return await Usuario.findByIdAndUpdate(id, { $inc: { emisiones: 1 } }, { new: true });
     }
 }
 

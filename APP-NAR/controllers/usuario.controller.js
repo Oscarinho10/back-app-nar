@@ -112,6 +112,15 @@ class UsuarioController {
         }
     }
 
+    async registrarEmision(req, res) {
+        try {
+            const usuario = await UsuarioService.registrarEmision(req.params.id);
+            res.json(usuario);
+        } catch (error) {
+            res.status(400).send(error.message);
+        }
+    }
+
     async getUsuariosByNombre(req, res) {
         try {
             const { nombre } = req.query;

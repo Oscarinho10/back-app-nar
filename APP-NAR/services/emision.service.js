@@ -1,4 +1,5 @@
 const EmisionRepository = require("../repositories/emision.repository");
+const UsuarioRepository = require("../repositories/usuario.repository");
 const Validaciones = require("../utils/validation");
 const Utils = require("../utils/utils");
 
@@ -51,9 +52,13 @@ class EmisionService {
 
         // Registrar la emisión
         emision.fechaEmision = new Date();
-        return await EmisionRepository.createEmision(emision);
-    }
+        const nuevaEmision = await EmisionRepository.createEmision(emision);
 
+        // Incrementar el contador de emisiones del usuario
+        await UsuarioRepository.incrementEmisiones(emision.idUsuario);
+
+        return nuevaEmision;
+    }
 
     async updateEmision(id, emision) {
         // Validar campos obligatorios
