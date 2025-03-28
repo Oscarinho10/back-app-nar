@@ -1,6 +1,7 @@
 const EmisionService = require("../services/emision.service");
 const SeguroService = require("../services/seguro.service");
 const AseguradoService = require("../services/asegurado.service");
+const ClienteService = require("../services/cliente.service");
 
 class EmisionController {
     async getAllEmisiones(req, res) {
@@ -80,10 +81,10 @@ class EmisionController {
             const emisionesDetalladas = await Promise.all(
                 emisiones.map(async (emision, index) => {
                     const seguro = await SeguroService.getSeguroById(emision.idSeguro);
-                    const asegurado = await AseguradoService.getAseguradoById(emision.idAsegurado);
+                    const cliente = await ClienteService.getClienteById(emision.idCliente);
                     return {
-                        asegurado: asegurado
-                        ? `${asegurado.nombre} ${asegurado.apellidoPaterno} ${asegurado.apellidoMaterno}`
+                        cliente: cliente
+                        ? `${cliente.nombre} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`
                         : "Asegurado no encontrado",
                         numeroPoliza: index + 1, // Enumerar las pólizas
                         nombreSeguro: seguro?.nombre || "Seguro no encontrado",
