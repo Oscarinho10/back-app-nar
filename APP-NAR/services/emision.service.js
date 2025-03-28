@@ -111,6 +111,48 @@ class EmisionService {
         }
         return seguro;
     }
+
+    async getEmisionesByCliente(req, res) {
+        try {
+            const { idCliente } = req.params;
+
+            // Validar el parámetro
+            if (!idCliente) {
+                return res.status(400).json({ success: false, message: "El id del cliente es requerido" });
+            }
+
+            // Obtener las emisiones del cliente
+            const emisiones = await EmisionService.getEmisionByIdCliente(idCliente);
+
+            if (!emisiones || emisiones.length === 0) {
+                return res.status(404).json({ success: false, message: "No se encontraron emisiones para este cliente" });
+            }
+
+            // Mapear las emisiones para agregar detalles del seguro
+            const emisionesDetalladas = await Promise.all(
+                emisiones.map(async (emision, index) => {
+                    const seguro = await SeguroService.getSeguroById(emision.idSeguro);
+                    return {
+                        numeroPoliza: index + 1, // Enumerar las pólizas
+                        nombreSeguro: seguro?.nombre || "Seguro no encontrado",
+                        vigencia: `${emision.fechaInicio.toISOString().split('T')[0]} - ${emision.fechaVencimiento.toISOString().split('T')[0]}`,
+                        montoTotal: emision.montoTotal
+                    };
+                })
+            );
+
+            // Responder con las emisiones detalladas
+            return res.status(200).json({
+                success: true,
+                message: "Emisiones obtenidas con éxito",
+                data: emisionesDetalladas
+            });
+        } catch (error) {
+            console.error("Error al obtener emisiones:", error.message);
+            return res.status(500).json({ success: false, message: "Error interno del servidor" });
+        }
+    }
+
 }
 
 module.exports = new EmisionService();

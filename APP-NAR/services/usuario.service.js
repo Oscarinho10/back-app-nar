@@ -330,28 +330,24 @@ class UsuarioService {
     }
 
     async loginAgente(correo, contrasena) {
-        // Validar campos obligatorios
+        // Validar que los campos no estén vacíos
         if (!correo || !contrasena) {
             throw new Error("Correo y contraseña son obligatorios");
         }
-
+    
         // Buscar usuario por correo
         const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
-        if (!usuario) {
+        if (!usuario || usuario.rol !== "agente") {
             throw new Error("Correo o contraseña incorrectos");
         }
-
-        // Comparar contraseñas
+    
+        // Validar la contraseña
         const esPasswordValido = await bcrypt.compare(contrasena, usuario.contrasena);
         if (!esPasswordValido) {
             throw new Error("Correo o contraseña incorrectos");
         }
-
-        // Verificar si el rol del usuario es "postulante"
-        if (usuario.rol !== "agente") {
-            throw new Error("Acceso denegado. Solo los usuarios con el rol de 'agente' pueden iniciar sesión.");
-        }
-
+    
+        // Retornar el usuario autenticado
         return usuario;
     }
 

@@ -1,4 +1,5 @@
 const EmisionService = require("../services/emision.service");
+const SeguroService = require("../services/seguro.service");
 
 class EmisionController {
     async getAllEmisiones(req, res) {
@@ -58,16 +59,44 @@ class EmisionController {
         }
     }
 
-    async getEmisionByIdCliente(req, res) {
+    async getEmisionesByCliente(req, res) {
         try {
-            const idCliente = req.params.idCliente;
+            const { idCliente } = req.params;
+    
+            // Validar el parámetro
             if (!idCliente) {
-                throw new Error("El Id de cliente es requerido");
+                return res.status(400).json({ success: false, message: "El id del cliente es requerido" });
             }
+    
+            // Obtener las emisiones del cliente
             const emisiones = await EmisionService.getEmisionByIdCliente(idCliente);
-            res.status(200).json(emisiones);
+    
+            if (!emisiones || emisiones.length === 0) {
+                return res.status(404).json({ success: false, message: "No se encontraron emisiones para este cliente" });
+            }
+    
+            // Mapear las emisiones para agregar detalles del seguro
+            const emisionesDetalladas = await Promise.all(
+                emisiones.map(async (emision, index) => {
+                    const seguro = await SeguroService.getSeguroById(emision.idSeguro);
+                    return {
+                        numeroPoliza: index + 1, // Enumerar las pólizas
+                        nombreSeguro: seguro?.nombre || "Seguro no encontrado",
+                        vigencia: `${emision.fechaInicio.toISOString().split('T')[0]} - ${emision.fechaVencimiento.toISOString().split('T')[0]}`,
+                        montoTotal: emision.montoTotal
+                    };
+                })
+            );
+    
+            // Responder con las emisiones detalladas
+            return res.status(200).json({ 
+                success: true, 
+                message: "Emisiones obtenidas con éxito", 
+                data: emisionesDetalladas 
+            });
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            console.error("Error al obtener emisiones:", error.message);
+            return res.status(500).json({ success: false, message: "Error interno del servidor" });
         }
     }
 
