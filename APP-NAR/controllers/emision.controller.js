@@ -16,15 +16,52 @@ class EmisionController {
     async getEmisionById(req, res) {
         try {
             const emisionId = req.params.id;
+    
             if (!emisionId) {
                 throw new Error("El Id de la emisión es requerido");
             }
+    
+            // Obtener la emisión por su ID
             const emision = await EmisionService.getEmisionById(emisionId);
-            res.status(200).json(emision);
+    
+            if (!emision) {
+                return res.status(404).json({ success: false, message: "Emisión no encontrada" });
+            }
+    
+            // Obtener los datos del asegurado y el seguro relacionados con la emisión
+            const asegurado = await AseguradoService.getAseguradoById(emision.idAsegurado);
+            const seguro = await SeguroService.getSeguroById(emision.idSeguro);
+    
+            // Si no se encuentran el asegurado o el seguro, devolver un error
+            if (!asegurado || !seguro) {
+                return res.status(404).json({ success: false, message: "Datos del asegurado o seguro no encontrados" });
+            }
+    
+            // Construir la respuesta con los datos necesarios
+            const emisionDetallada = {
+                nombreAsegurado: `${asegurado.nombre} ${asegurado.apellidoPaterno} ${asegurado.apellidoMaterno}`,
+                rfc: asegurado.rfc,
+                telefono: asegurado.telefono,
+                edad: asegurado.edad,
+                nombreSeguro: seguro.nombre,
+                tipoSeguro: seguro.tipo,
+                cobertura: seguro.cobertura,
+                vigencia: `${emision.fechaInicio.toISOString().split('T')[0]} - ${emision.fechaVencimiento.toISOString().split('T')[0]}`,
+                montoTotal: emision.montoTotal,
+            };
+    
+            return res.status(200).json({ 
+                success: true, 
+                message: "Emisión obtenida con éxito", 
+                data: emisionDetallada 
+            });
+    
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            console.error("Error al obtener emisión:", error.message);
+            return res.status(500).json({ success: false, message: "Error interno del servidor" });
         }
     }
+    
 
     async createEmision(req, res) {
         try {
