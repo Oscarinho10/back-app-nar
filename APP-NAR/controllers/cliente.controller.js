@@ -12,6 +12,17 @@ class ClienteController {
         }
     }
 
+    async getAllClientesByIdUsuario(req, res) {
+        try {
+            const { idUsuario } = req.params; // Obtenemos el idUsuario desde los parámetros de la URL
+            const clientes = await ClienteService.getAllClientesByIdUsuario(idUsuario);
+            res.status(200).json(clientes); // Enviar la respuesta con los clientes encontrados
+        } catch (error) {
+            res.status(400).json({ message: error.message }); // Manejo de errores
+        }
+    }
+    
+
     async getClienteById(req, res) {
         try {
             //Validar que el Id venga en la petición

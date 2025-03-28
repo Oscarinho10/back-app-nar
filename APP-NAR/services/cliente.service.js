@@ -6,7 +6,17 @@ class ClienteService {
     async getAllClientes() {
         return await ClienteRepository.getAllClientes();
     }
+    
+    async getAllClientesByIdUsuario(idUsuario) {
+        const clientes = await ClienteRepository.getAllClientesByIdUsuario(idUsuario);
+        if (!clientes) {
+            throw new Error('Clientes no encontrados');
+        }
 
+        return clientes;
+        // Suponiendo que la relación de cliente con el usuario está basada en un campo `idUsuario` 
+    }
+    
     async getClienteById(id) {
         const cliente = await ClienteRepository.getClienteById(id);
         if (!cliente) {

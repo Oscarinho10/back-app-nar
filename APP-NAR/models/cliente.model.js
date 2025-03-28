@@ -8,7 +8,8 @@ const ClienteSchema = mongoose.Schema({
     correo: { type: String, required: true, unique: true },
     rfc: { type: String, required: true, unique: true },
     telefono: { type: String, required: true, unique: true },
-    edad: { type: Number, required: false } // Campo para la edad (no manual)
+    edad: { type: Number, required: false }, // Campo para la edad (no manual)
+    idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true } // Relación con el modelo Usuario
 });
 
 module.exports = mongoose.model('Cliente', ClienteSchema);

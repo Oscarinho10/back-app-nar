@@ -6,6 +6,10 @@ class ClienteRepository {
         return await Cliente.find();
     }
 
+    async getAllClientesByIdUsuario(idUsuario) {
+        return await Cliente.find({ idUsuario });
+    }    
+
     async getClienteById(id) {
         return await Cliente.findById(id);
     }
