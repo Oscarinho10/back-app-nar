@@ -1,5 +1,6 @@
 const UsuarioService = require("../services/usuario.service");
 const EmailService = require("../services/email.service");
+const jwt = require('jsonwebtoken');
 
 class UsuarioController {
     async getAllUsuarios(req, res) {
@@ -153,17 +154,17 @@ class UsuarioController {
     async login(req, res) {
         try {
             const { correo, contrasena } = req.body;
-    
+
             if (!correo || !contrasena) {
                 return res.status(400).json({ success: false, message: "Correo y contraseña son obligatorios" });
             }
-    
+
             const usuario = await UsuarioService.login(correo, contrasena);
-    
+
             const token = jwt.sign({ _id: usuario._id }, "secreta", { expiresIn: '1h' });
-    
+
             console.log("Usuario autenticado:", usuario); // Verifica qué datos contiene
-    
+
             return res.status(200).json({
                 success: true,
                 message: "Bienvenido",
@@ -177,7 +178,8 @@ class UsuarioController {
         } catch (error) {
             return res.status(401).json({ success: false, message: error.message });
         }
-    }    
+    }
+
 
     async loginAgente(req, res) {
         try {
@@ -185,15 +187,15 @@ class UsuarioController {
 
             // Validar que los campos no estén vacíos
             if (!correo || !contrasena) {
-                return res.status(400).json({ message: "Correo y contraseña son obligatorios" });
+                return res.status(400).json({ success: false, message: "Correo y contraseña son obligatorios" });
             }
-    
+
             // Llamar al servicio para autenticar al agente
             const usuario = await UsuarioService.loginAgente(correo, contrasena);
-    
+
             // Generar token JWT si el usuario existe
             const token = jwt.sign({ _id: usuario._id }, process.env.JWT_SECRET || "secreta", { expiresIn: '1h' });
-    
+
             // Enviar respuesta exitosa con el token
             return res.status(200).json({
                 success: true,
@@ -205,8 +207,9 @@ class UsuarioController {
                 }
             });
         } catch (error) {
+            // Manejo de errores
             const statusCode = error.message.includes("obligatorios") ? 400 : 401;
-            res.status(statusCode).json({ message: error.message });
+            return res.status(statusCode).json({ success: false, message: error.message });
         }
     }
 
@@ -222,7 +225,8 @@ class UsuarioController {
             // Enviar el código por correo
             await EmailService.enviarCorreo(
                 correo,
-                "Recuperación de Contraseña"      ,
+                "Recuperación de Contraseña"
+                ,
                 `Hola, para recuperar tu contraseña, utiliza el siguiente código: ${resultado.codigoRecuperacion}`
             );
 
@@ -274,4 +278,4 @@ class UsuarioController {
     }
 }
 
-module.exports = new UsuarioController();             
+module.exports = new UsuarioController();
