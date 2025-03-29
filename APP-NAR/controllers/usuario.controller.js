@@ -153,16 +153,33 @@ class UsuarioController {
     async login(req, res) {
         try {
             const { correo, contrasena } = req.body;
+
+            // Validar que los campos no estén vacíos
             if (!correo || !contrasena) {
                 throw new Error("Correo y contraseña son obligatorios");
             }
 
             const usuario = await UsuarioService.login(correo, contrasena);
-            res.status(200).json(usuario);
+
+            // Generar token JWT
+            const token = jwt.sign({ _id: usuario._id }, "secreta", { expiresIn: '1h' });
+
+            // Responder con el usuario y el token
+            return res.status(200).json({
+                success: true,
+                message: "Bienvenido",
+                data: {
+                    ...usuario,
+                    contrasena: null, // Ocultar la contraseña
+                    token
+                }
+            });
         } catch (error) {
-            res.status(401).json({ message: error.message });
+            // Manejo de errores
+            return res.status(401).json({ success: false, message: error.message });
         }
     }
+
 
     async loginAgente(req, res) {
         try {
@@ -172,12 +189,23 @@ class UsuarioController {
             if (!correo || !contrasena) {
                 return res.status(400).json({ message: "Correo y contraseña son obligatorios" });
             }
-
-            // Llamar al servicio para login de postulante
+    
+            // Llamar al servicio para autenticar al agente
             const usuario = await UsuarioService.loginAgente(correo, contrasena);
-
-            // Respuesta en caso de éxito
-            res.status(200).json(usuario);
+    
+            // Generar token JWT si el usuario existe
+            const token = jwt.sign({ _id: usuario._id }, process.env.JWT_SECRET || "secreta", { expiresIn: '1h' });
+    
+            // Enviar respuesta exitosa con el token
+            return res.status(200).json({
+                success: true,
+                message: "Autenticación exitosa",
+                data: {
+                    ...usuario,
+                    contrasena: null, // Ocultar contraseña
+                    token
+                }
+            });
         } catch (error) {
             const statusCode = error.message.includes("obligatorios") ? 400 : 401;
             res.status(statusCode).json({ message: error.message });

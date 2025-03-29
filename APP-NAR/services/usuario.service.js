@@ -326,7 +326,11 @@ class UsuarioService {
         }
 
         // Retornar usuario si la autenticación es correcta
-        return usuario;
+        return {
+            _id: usuario._id,
+            correo: usuario.correo,
+            rol: usuario.rol // Incluye explícitamente el rol
+        };
     }
 
     async loginAgente(correo, contrasena) {
