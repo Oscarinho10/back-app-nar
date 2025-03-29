@@ -155,48 +155,47 @@ class UsuarioController {
         try {
             const { correo, contrasena } = req.body;
 
-            // Validar que los campos no estén vacíos
             if (!correo || !contrasena) {
                 return res.status(400).json({ success: false, message: "Correo y contraseña son obligatorios" });
             }
 
-            // Llamar al servicio para autenticar al usuario
             const usuario = await UsuarioService.login(correo, contrasena);
 
-            // Generar token JWT
             const token = jwt.sign({ _id: usuario._id }, "secreta", { expiresIn: '1h' });
 
-            // Responder con el usuario y el token
+            console.log("Usuario autenticado:", usuario); // Verifica qué datos contiene
+
             return res.status(200).json({
                 success: true,
                 message: "Bienvenido",
                 data: {
-                    ...usuario,
-                    contrasena: null, // Ocultar la contraseña
-                    token
-                }
+                    _id: usuario._id,
+                    correo: usuario.correo,
+                    rol: usuario.rol, // Incluye explícitamente el rol
+                    token,
+                },
             });
         } catch (error) {
-            // Manejo de errores
             return res.status(401).json({ success: false, message: error.message });
         }
     }
 
+
     async loginAgente(req, res) {
         try {
             const { correo, contrasena } = req.body;
-    
+
             // Validar que los campos no estén vacíos
             if (!correo || !contrasena) {
                 return res.status(400).json({ success: false, message: "Correo y contraseña son obligatorios" });
             }
-    
+
             // Llamar al servicio para autenticar al agente
             const usuario = await UsuarioService.loginAgente(correo, contrasena);
-    
+
             // Generar token JWT si el usuario existe
             const token = jwt.sign({ _id: usuario._id }, process.env.JWT_SECRET || "secreta", { expiresIn: '1h' });
-    
+
             // Enviar respuesta exitosa con el token
             return res.status(200).json({
                 success: true,
