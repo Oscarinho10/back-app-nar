@@ -120,6 +120,7 @@ class EmisionController {
                     const seguro = await SeguroService.getSeguroById(emision.idSeguro);
                     const cliente = await ClienteService.getClienteById(emision.idCliente);
                     return {
+                        idPoliza: emision.id,
                         cliente: cliente
                         ? `${cliente.nombre} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`
                         : "Asegurado no encontrado",
