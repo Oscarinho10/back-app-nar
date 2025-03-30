@@ -121,121 +121,103 @@ class UsuarioService {
     }
 
     async createUsuarioAdmin(usuario) {
-        //Validar que todos los campos obligatorios vengan
-        if (!usuario.nombre || !usuario.apellidoPaterno || !usuario.apellidoMaterno || !usuario.curp || !usuario.rfc || !usuario.correo || !usuario.contrasena || !usuario.telefono) {
+        // Validar que todos los campos obligatorios vengan
+        if (!usuario.nombre || !usuario.apellidoPaterno || !usuario.apellidoMaterno || !usuario.curp || 
+            !usuario.rfc || !usuario.correo || !usuario.telefono) {
             throw new Error('Todos los campos son requeridos');
         }
-
+    
         // Validar el formato de CURP, RFC, correo y contraseña
         Validaciones.validarCURP(usuario.curp);
         Validaciones.validarRFC(usuario.rfc);
         Validaciones.validarCorreo(usuario.correo);
-        Validaciones.validarContrasena(usuario.contrasena);
-
-        // Validar que el RFC, CURP, correo, y teléfono no existan en la base de datos
+    
+        // Validar que el RFC, CURP, correo y teléfono no existan en la base de datos
         const usuarioByCURP = await UsuarioRepository.getUsuarioByCURP(usuario.curp);
         const usuarioByRFC = await UsuarioRepository.getUsuarioByRFC(usuario.rfc);
         const usuarioByCorreo = await UsuarioRepository.getUsuarioByCorreo(usuario.correo);
         const usuarioByTelefono = await UsuarioRepository.getUsuarioByTelefono(usuario.telefono);
-
-        if (usuarioByCURP) {
-            throw new Error('La CURP ya existe');
-        }
-        if (usuarioByRFC) {
-            throw new Error('El RFC ya existe');
-        }
-        if (usuarioByCorreo) {
-            throw new Error('El correo ya existe');
-        }
-        if (usuarioByTelefono) {
-            throw new Error('El telefono ya existe');
-        }
-
+    
+        if (usuarioByCURP) throw new Error('La CURP ya existe');
+        if (usuarioByRFC) throw new Error('El RFC ya existe');
+        if (usuarioByCorreo) throw new Error('El correo ya existe');
+        if (usuarioByTelefono) throw new Error('El teléfono ya existe');
+    
+        // Contar cuántos administradores existen actualmente
+        const totalAdministradores = await UsuarioRepository.countUsuariosByRol('administrador');
+    
+        // Generar una nueva contraseña autoincremental
+        const nuevaContrasena = `Administrador${totalAdministradores + 1}`;
+    
         // Encriptar la contraseña antes de guardarla
-        const salt = await bcrypt.genSalt(10); // 10 es el número de rondas de salt
-        const contrasenaEncriptada = await bcrypt.hash(usuario.contrasena, salt);
-
-        // Asignar la contraseña encriptada
+        const salt = await bcrypt.genSalt(10);
+        const contrasenaEncriptada = await bcrypt.hash(nuevaContrasena, salt);
+    
+        // Asignar la nueva contraseña encriptada y otros atributos
         usuario.contrasena = contrasenaEncriptada;
-
-        // Asignar el rol, fecha de registro y estado
         usuario.rol = "administrador";
         usuario.fechaRegistro = new Date();
         usuario.estado = "activo"; // Por defecto, estado activo
-
+    
         // Guardar el usuario en la base de datos
-        return await UsuarioRepository.createUsuario(usuario);
+        const usuarioCreado = await UsuarioRepository.createUsuario(usuario);
+    
+        // Devolver el usuario creado junto con la nueva contraseña en texto plano
+        return { ...usuarioCreado.toObject(), nuevaContrasena };
     }
-
+    
     async updateUsuario(id, usuario) {
-        //Validar que la persona exista
         const usuarioById = await UsuarioRepository.getUsuarioById(id);
-        if (!usuarioById) {
-            throw new Error('Usuario no encontrado');
-        }
-
-        //Validar que todos los campos vengan en el body
-        if (!usuario.nombre || !usuario.apellidoPaterno || !usuario.apellidoMaterno || !usuario.curp || !usuario.rfc || !usuario.correo || !usuario.contrasena || !usuario.telefono) {
+        if (!usuarioById) throw new Error('Usuario no encontrado');
+    
+        if (!usuario.nombre || !usuario.apellidoPaterno || !usuario.apellidoMaterno || !usuario.curp || 
+            !usuario.rfc || !usuario.correo || !usuario.telefono) {
             throw new Error('Todos los campos son requeridos');
         }
-
-        // Validar el rol permitido
-        const rolesPermitidos = ["administrador", "postulante", "agente"];
-        if (!rolesPermitidos.includes(usuario.rol.toLowerCase())) {
+    
+        if (usuario.rol && !["administrador", "postulante", "agente"].includes(usuario.rol.toLowerCase())) {
             throw new Error('El rol debe ser "administrador", "postulante" o "agente"');
         }
-
+    
         Validaciones.validarCURP(usuario.curp);
-
         Validaciones.validarRFC(usuario.rfc);
-
         Validaciones.validarCorreo(usuario.correo);
-
-        Validaciones.validarContrasena(usuario.contrasena);
-
+    
+        if (usuario.contrasena) {
+            Validaciones.validarContrasena(usuario.contrasena);
+            const salt = await bcrypt.genSalt(10);
+            usuario.contrasena = await bcrypt.hash(usuario.contrasena, salt);
+        }
+    
         const usuarioByCURPAndNotId = await UsuarioRepository.getUsuarioByCURPAndNotId(id, usuario.curp);
-        if (usuarioByCURPAndNotId) {
-            throw new Error('La curp ya existe');
-        }
-
+        if (usuarioByCURPAndNotId) throw new Error('La curp ya existe');
+    
         const usuarioByRFCAndNotId = await UsuarioRepository.getUsuarioByRFCAndNotId(id, usuario.rfc);
-        if (usuarioByRFCAndNotId) {
-            throw new Error('El RFC ya existe');
-        }
-
+        if (usuarioByRFCAndNotId) throw new Error('El RFC ya existe');
+    
         const usuarioByCorreoAndNotId = await UsuarioRepository.getUsuarioByCorreoAndNotId(id, usuario.correo);
-        if (usuarioByCorreoAndNotId) {
-            throw new Error('El correo ya existe');
-        }
-
+        if (usuarioByCorreoAndNotId) throw new Error('El correo ya existe');
+    
         const usuarioByTelefonoAndNotId = await UsuarioRepository.getUsuarioByTelefonoAndNotId(id, usuario.telefono);
-        if (usuarioByTelefonoAndNotId) {
-            throw new Error('El telefono ya existe');
-        }
-
+        if (usuarioByTelefonoAndNotId) throw new Error('El teléfono ya existe');
+    
         return await UsuarioRepository.updateUsuario(id, usuario);
-
     }
-
+    
     async updateUsuarioPostulante(id, nuevaContrasena) {
-        // Validar que el usuario exista
         const usuarioById = await UsuarioRepository.getUsuarioById(id);
-        if (!usuarioById) {
-            throw new Error('Usuario no encontrado');
-        }
-
-        // Validar que la contraseña venga en el body
-        if (!nuevaContrasena) {
-            throw new Error('La contraseña es requerida');
-        }
-
-        // Validar la nueva contraseña
+        if (!usuarioById) throw new Error('Usuario no encontrado');
+    
+        if (!nuevaContrasena) throw new Error('La contraseña es requerida');
+    
         Validaciones.validarContrasena(nuevaContrasena);
-
-        // Actualizar solo la contraseña del usuario
-        return await UsuarioRepository.updateUsuario(id, { contrasena: nuevaContrasena });
+    
+        // Encriptar la nueva contraseña
+        const salt = await bcrypt.genSalt(10);
+        const contrasenaEncriptada = await bcrypt.hash(nuevaContrasena, salt);
+    
+        return await UsuarioRepository.updateUsuario(id, { contrasena: contrasenaEncriptada });
     }
-
 
     async updateUsuarioByAdmin(id, usuario) {
         // Validar que la persona exista
@@ -277,7 +259,6 @@ class UsuarioService {
         return await UsuarioRepository.updateUsuario(id, usuario);
     }
 
-
     async updateUsuarioStatusInactive(id) {
         //Validar que la aseguradora exista
         const usuario = await UsuarioRepository.getUsuarioById(id);
@@ -302,10 +283,21 @@ class UsuarioService {
 
     }
 
-    async updatePostulanteAceptado(id) {
-        // Validar que el usuario exista
+    async updatePostulanteRolAgente(id) {
+        //Validar que la aseguradora exista
         const usuario = await UsuarioRepository.getUsuarioById(id);
         if (!usuario) {
+            throw new Error('Usuario no encontrado')
+        }
+
+        return await UsuarioRepository.updatePostulanteRolAgente(id)
+
+    }
+
+    async updatePostulanteAceptado(id) {
+        // Validar que el usuario exista
+        const usuarioId = await UsuarioRepository.getUsuarioById(id);
+        if (!usuarioId) {
             throw new Error('Usuario no encontrado');
         }
     
@@ -319,16 +311,13 @@ class UsuarioService {
         const salt = await bcrypt.genSalt(10);
         const contrasenaEncriptada = await bcrypt.hash(nuevaContrasena, salt);
     
-        // Asignar la nueva contraseña encriptada
-        usuario.contrasena = contrasenaEncriptada;
-    
-        // Actualizar el usuario en la base de datos
-        await UsuarioRepository.updatePostulanteAceptado(id, usuario);
+        // Actualizar solo la contraseña y el estado en la base de datos
+        await UsuarioRepository.updatePostulanteAceptado(id, contrasenaEncriptada);
     
         // Retornar la nueva contraseña generada en texto plano
         return { success: true, nuevaContrasena };
-    }    
-
+    }
+    
     async registrarEmision(id) {
         const usuario = await UsuarioRepository.getUsuarioById(id);
         if (!usuario) {
@@ -393,7 +382,6 @@ class UsuarioService {
         // Retornar el usuario autenticado
         return usuario;
     }
-
 
     async generarCodigoRecuperacion(correo) {
         if (!correo) {

@@ -1,4 +1,5 @@
 const Usuario = require('../models/usuario.model');
+const mongoose = require('mongoose');
 
 class UsuarioRepository {
     // Obtener todos los usuarios
@@ -26,7 +27,10 @@ class UsuarioRepository {
 
     // Actualizar usuario
     async updateUsuario(id, usuario) {
-        return await Usuario.findByIdAndUpdate(id, usuario, { new: true });
+        return await Usuario.findByIdAndUpdate(id, usuario, {
+            new: true,
+            runValidators: true // Asegura que se validen los datos
+        });
     }
 
     // Habilitar o deshabilitar usuario
@@ -83,9 +87,20 @@ class UsuarioRepository {
         return await Usuario.findByIdAndUpdate(id, { estado: 'activo' }, { new: true });
     }
 
-    async updatePostulanteAceptado(id) {
-        // new: true -> devuelve el producto actualizado
-        return await Usuario.findByIdAndUpdate(id, { estado: 'activo' }, { new: true });
+    async updatePostulanteAceptado(id, contrasena) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new Error('ID de usuario no válido');
+        }
+
+        return await Usuario.findByIdAndUpdate(
+            id,
+            { $set: { estado: 'activo', contrasena: contrasena } },  // Se usa `$set` para asegurar que solo se actualizan estos campos
+            { new: true }
+        );
+    }
+
+    async updatePostulanteRolAgente(id) {
+        return await Usuario.findByIdAndUpdate(id, { rol: 'agente' }, { new: true });
     }
 
     // Asignar un código de recuperación y fecha de expiración

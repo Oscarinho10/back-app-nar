@@ -7,7 +7,7 @@ const UsuarioSchema = mongoose.Schema({
     curp: { type: String, required: true, unique: true },
     rfc: { type: String, required: true, unique: true },
     correo: { type: String, required: true, unique: true },
-    contrasena: { type: String, required: false },
+    contrasena: { type: String, default: null },
     telefono: { type: String, required: true, unique: true },
     rol: { type: String, required: true },
     fechaRegistro: { type: Date, default: Date.now },

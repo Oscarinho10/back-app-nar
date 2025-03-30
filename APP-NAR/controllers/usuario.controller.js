@@ -75,7 +75,18 @@ class UsuarioController {
         try {
             // Llamar a createUsuarioAdmin en lugar de createUsuario
             const usuario = await UsuarioService.createUsuarioAdmin(req.body);
-            res.json(usuario);
+
+            await EmailService.enviarCorreo(
+                usuario.correo,
+                "Bienvenido adminstrador",
+                `Hola, Felicidades! Ya eres Administrador de nuestra aplicación web Multi Aseguradoras NAR, tu contraseña para ingresar será: ${usuario.nuevaContrasena}, una vez dentro puedes cambiarla.`
+            );
+
+            res.status(200).json({
+                success: true,
+                message: "Administrador creado correctamente y enviado al correo su nueva contraseña.",
+                data: usuario,
+            });
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
@@ -154,26 +165,36 @@ class UsuarioController {
         }
     }
 
+    async updatePostulanteRolAgente(req, res) {
+        try {
+            const usuarioId = req.params.id;
+            const usuario = await UsuarioService.updatePostulanteRolAgente(usuarioId, req.body);
+            res.json(usuario);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async updatePostulanteAceptado(req, res) {
         try {
             const usuarioId = req.params.id;
-    
+
             // Actualizar el usuario y obtener la nueva contraseña generada
             const resultado = await UsuarioService.updatePostulanteAceptado(usuarioId);
-    
+
             // Obtener el usuario para extraer su correo
             const usuario = await UsuarioRepository.getUsuarioById(usuarioId);
             if (!usuario) {
                 throw new Error("Usuario no encontrado");
             }
-    
+
             // Enviar el correo con la nueva contraseña
             await EmailService.enviarCorreo(
-                usuario.correo, 
+                usuario.correo,
                 "Bienvenido postulante",
                 `Hola, Felicidades! Haz pasado el primer filtro. Utiliza la siguiente contraseña para ingresar y enviar todos tus documentos: ${resultado.nuevaContrasena}`
             );
-    
+
             res.status(200).json({
                 success: true,
                 message: "Postulante aceptado correctamente y enviado al correo su nueva contraseña.",
@@ -182,7 +203,7 @@ class UsuarioController {
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
-    }    
+    }
 
     async registrarEmision(req, res) {
         try {
@@ -234,7 +255,6 @@ class UsuarioController {
             return res.status(401).json({ success: false, message: error.message });
         }
     }
-
 
     async loginAgente(req, res) {
         try {
