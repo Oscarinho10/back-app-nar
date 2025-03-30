@@ -13,6 +13,8 @@ router.post('/agente', UsuarioController.createUsuarioAgente);
 router.post('/admin', UsuarioController.createUsuarioAdmin);
 router.post('/login', UsuarioController.login);
 router.put('/:id', UsuarioController.updateUsuario);
+router.put('/updPostulante/:id', UsuarioController.updateUsuarioPostulante);
+router.put('/postulanteAceptado/:id', UsuarioController.updatePostulanteAceptado);
 router.put('/byAdmin/:id', UsuarioController.updateUsuarioByAdmin);
 router.post('/login/agente', UsuarioController.loginAgente); // Nueva ruta para login de postulantes
 router.put('/inactive/:id', UsuarioController.updateUsuarioStatusInactive);

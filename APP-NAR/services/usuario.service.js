@@ -36,7 +36,7 @@ class UsuarioService {
 
     async createUsuarioPostulante(usuario) {
         //Validar que todos los campos obligatorios vengan
-        if (!usuario.nombre || !usuario.apellidoPaterno || !usuario.apellidoMaterno || !usuario.curp || !usuario.rfc || !usuario.correo || !usuario.contrasena || !usuario.telefono) {
+        if (!usuario.nombre || !usuario.apellidoPaterno || !usuario.apellidoMaterno || !usuario.curp || !usuario.rfc || !usuario.correo || !usuario.telefono) {
             throw new Error('Todos los campos son requeridos');
         }
 
@@ -44,7 +44,6 @@ class UsuarioService {
         Validaciones.validarCURP(usuario.curp);
         Validaciones.validarRFC(usuario.rfc);
         Validaciones.validarCorreo(usuario.correo);
-        Validaciones.validarContrasena(usuario.contrasena);
 
         // Validar que el RFC, CURP, correo, y teléfono no existan en la base de datos
         const usuarioByCURP = await UsuarioRepository.getUsuarioByCURP(usuario.curp);
@@ -65,17 +64,10 @@ class UsuarioService {
             throw new Error('El telefono ya existe');
         }
 
-        // Encriptar la contraseña antes de guardarla
-        const salt = await bcrypt.genSalt(10); // 10 es el número de rondas de salt
-        const contrasenaEncriptada = await bcrypt.hash(usuario.contrasena, salt);
-
-        // Asignar la contraseña encriptada
-        usuario.contrasena = contrasenaEncriptada;
-
         // Asignar el rol, fecha de registro y estado
         usuario.rol = "postulante";
         usuario.fechaRegistro = new Date();
-        usuario.estado = "activo"; // Por defecto, estado activo
+        usuario.estado = "inactivo"; // Por defecto, estado activo
 
         // Guardar el usuario en la base de datos
         return await UsuarioRepository.createUsuario(usuario);
@@ -225,6 +217,26 @@ class UsuarioService {
 
     }
 
+    async updateUsuarioPostulante(id, nuevaContrasena) {
+        // Validar que el usuario exista
+        const usuarioById = await UsuarioRepository.getUsuarioById(id);
+        if (!usuarioById) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        // Validar que la contraseña venga en el body
+        if (!nuevaContrasena) {
+            throw new Error('La contraseña es requerida');
+        }
+
+        // Validar la nueva contraseña
+        Validaciones.validarContrasena(nuevaContrasena);
+
+        // Actualizar solo la contraseña del usuario
+        return await UsuarioRepository.updateUsuario(id, { contrasena: nuevaContrasena });
+    }
+
+
     async updateUsuarioByAdmin(id, usuario) {
         // Validar que la persona exista
         const usuarioById = await UsuarioRepository.getUsuarioById(id);
@@ -290,6 +302,33 @@ class UsuarioService {
 
     }
 
+    async updatePostulanteAceptado(id) {
+        // Validar que el usuario exista
+        const usuario = await UsuarioRepository.getUsuarioById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+    
+        // Contar cuántos postulantes existen actualmente
+        const totalPostulantes = await UsuarioRepository.countUsuariosByRol('postulante');
+    
+        // Generar una nueva contraseña autoincremental
+        const nuevaContrasena = `Postulante${totalPostulantes + 1}`;
+    
+        // Encriptar la contraseña antes de guardarla
+        const salt = await bcrypt.genSalt(10);
+        const contrasenaEncriptada = await bcrypt.hash(nuevaContrasena, salt);
+    
+        // Asignar la nueva contraseña encriptada
+        usuario.contrasena = contrasenaEncriptada;
+    
+        // Actualizar el usuario en la base de datos
+        await UsuarioRepository.updatePostulanteAceptado(id, usuario);
+    
+        // Retornar la nueva contraseña generada en texto plano
+        return { success: true, nuevaContrasena };
+    }    
+
     async registrarEmision(id) {
         const usuario = await UsuarioRepository.getUsuarioById(id);
         if (!usuario) {
@@ -338,19 +377,19 @@ class UsuarioService {
         if (!correo || !contrasena) {
             throw new Error("Correo y contraseña son obligatorios");
         }
-    
+
         // Buscar usuario por correo
         const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
         if (!usuario || usuario.rol !== "agente") {
             throw new Error("Correo o contraseña incorrectos");
         }
-    
+
         // Validar la contraseña
         const esPasswordValido = await bcrypt.compare(contrasena, usuario.contrasena);
         if (!esPasswordValido) {
             throw new Error("Correo o contraseña incorrectos");
         }
-    
+
         // Retornar el usuario autenticado
         return usuario;
     }

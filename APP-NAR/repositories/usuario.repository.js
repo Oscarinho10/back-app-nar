@@ -83,6 +83,11 @@ class UsuarioRepository {
         return await Usuario.findByIdAndUpdate(id, { estado: 'activo' }, { new: true });
     }
 
+    async updatePostulanteAceptado(id) {
+        // new: true -> devuelve el producto actualizado
+        return await Usuario.findByIdAndUpdate(id, { estado: 'activo' }, { new: true });
+    }
+
     // Asignar un código de recuperación y fecha de expiración
     async setRecoveryCode(id, codigoRecuperacion, expiracion) {
         return await Usuario.findByIdAndUpdate(
@@ -120,6 +125,11 @@ class UsuarioRepository {
 
     async incrementEmisiones(id) {
         return await Usuario.findByIdAndUpdate(id, { $inc: { emisiones: 1 } }, { new: true });
+    }
+
+    // Contar la cantidad de usuarios por rol
+    async countUsuariosByRol(rol) {
+        return await Usuario.countDocuments({ rol: rol });
     }
 }
 

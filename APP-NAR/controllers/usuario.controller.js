@@ -1,4 +1,5 @@
 const UsuarioService = require("../services/usuario.service");
+const UsuarioRepository = require("../repositories/usuario.repository");
 const EmailService = require("../services/email.service");
 const jwt = require('jsonwebtoken');
 
@@ -94,6 +95,30 @@ class UsuarioController {
         }
     }
 
+    async updateUsuarioPostulante(req, res) {
+        try {
+            const usuarioId = req.params.id;
+            const { nuevaContrasena } = req.body;
+
+            if (!usuarioId || usuarioId.trim() === '') {
+                throw new Error('El Id del usuario es requerido');
+            }
+
+            if (!nuevaContrasena || nuevaContrasena.trim() === '') {
+                throw new Error('La nueva contraseña es requerida');
+            }
+
+            const usuario = await UsuarioService.updateUsuarioPostulante(usuarioId, nuevaContrasena);
+            res.json({
+                success: true,
+                message: "Contraseña actualizada correctamente.",
+                data: usuario
+            });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async updateUsuarioByAdmin(req, res) {
         try {
             const usuarioId = req.params.id;
@@ -128,6 +153,36 @@ class UsuarioController {
             res.status(400).json({ message: error.message });
         }
     }
+
+    async updatePostulanteAceptado(req, res) {
+        try {
+            const usuarioId = req.params.id;
+    
+            // Actualizar el usuario y obtener la nueva contraseña generada
+            const resultado = await UsuarioService.updatePostulanteAceptado(usuarioId);
+    
+            // Obtener el usuario para extraer su correo
+            const usuario = await UsuarioRepository.getUsuarioById(usuarioId);
+            if (!usuario) {
+                throw new Error("Usuario no encontrado");
+            }
+    
+            // Enviar el correo con la nueva contraseña
+            await EmailService.enviarCorreo(
+                usuario.correo, 
+                "Bienvenido postulante",
+                `Hola, Felicidades! Haz pasado el primer filtro. Utiliza la siguiente contraseña para ingresar y enviar todos tus documentos: ${resultado.nuevaContrasena}`
+            );
+    
+            res.status(200).json({
+                success: true,
+                message: "Postulante aceptado correctamente y enviado al correo su nueva contraseña.",
+                data: resultado,
+            });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }    
 
     async registrarEmision(req, res) {
         try {
