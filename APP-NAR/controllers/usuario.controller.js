@@ -37,6 +37,72 @@ class UsuarioController {
         }
     }
 
+    async getAllUsuariosAgentesActivos(req, res) {
+        try {
+            const usuarios = await UsuarioService.getAllUsuariosAgentesActivos();
+            // Por defecto siempre retorna 200 si no se le especifica el status
+            // 200 -> éxito | OK 
+            res.status(200).json(usuarios);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getAllUsuariosAgentesInactivos(req, res) {
+        try {
+            const usuarios = await UsuarioService.getAllUsuariosAgentesInactivos();
+            // Por defecto siempre retorna 200 si no se le especifica el status
+            // 200 -> éxito | OK 
+            res.status(200).json(usuarios);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getAllUsuariosAdministradoresActivos(req, res) {
+        try {
+            const usuarios = await UsuarioService.getAllUsuariosAdministradoresActivos();
+            // Por defecto siempre retorna 200 si no se le especifica el status
+            // 200 -> éxito | OK 
+            res.status(200).json(usuarios);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getAllUsuariosAdministradoresInactivos(req, res) {
+        try {
+            const usuarios = await UsuarioService.getAllUsuariosAdministradoresInactivos();
+            // Por defecto siempre retorna 200 si no se le especifica el status
+            // 200 -> éxito | OK 
+            res.status(200).json(usuarios);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getAllUsuariosActivosProspectos(req, res) {
+        try {
+            const usuarios = await UsuarioService.getAllUsuariosActivosProspectos();
+            // Por defecto siempre retorna 200 si no se le especifica el status
+            // 200 -> éxito | OK 
+            res.status(200).json(usuarios);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async getAllUsuariosInactivosProspectos(req, res) {
+        try {
+            const usuarios = await UsuarioService.getAllUsuariosInactivosProspectos();
+            // Por defecto siempre retorna 200 si no se le especifica el status
+            // 200 -> éxito | OK 
+            res.status(200).json(usuarios);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async getUsuarioById(req, res) {
         try {
             //Validar que el Id venga en la petición

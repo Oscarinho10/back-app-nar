@@ -15,6 +15,30 @@ class UsuarioRepository {
         return await Usuario.find({ estado: 'inactivo' }); // Retorna solo usuarios inactivos
     }
 
+    async getAllUsuariosAgentesActivos() {
+        return await Usuario.find({ estado: 'activo', rol: 'agente' }); // Retorna solo usuarios activos
+    }
+
+    async getAllUsuariosAgentesInactivos() {
+        return await Usuario.find({ estado: 'inactivo', rol: 'agente' }); // Retorna solo usuarios activos
+    }
+
+    async getAllUsuariosAdministradoresActivos() {
+        return await Usuario.find({ estado: 'activo', rol: 'administrador' }); // Retorna solo usuarios activos
+    }
+
+    async getAllUsuariosAdministradoresInactivos() {
+        return await Usuario.find({ estado: 'inactivo', rol: 'administrador' }); // Retorna solo usuarios activos
+    }
+
+    async getAllUsuariosInactivosProspectos() {
+        return await Usuario.find({ estado: 'inactivo', rol: 'postulante' });
+    }
+
+    async getAllUsuariosActivosProspectos() {
+        return await Usuario.find({ estado: 'activo', rol: 'postulante' });
+    }
+
     // Obtener usuario por ID
     async getUsuarioById(id) {
         return await Usuario.findById(id);
