@@ -1,4 +1,5 @@
 const CotizacionRepository = require("../repositories/cotizacion.repository");
+const UsuarioRepository = require("../repositories/usuario.repository");
 const Validaciones = require("../utils/validation");
 const Utils = require("../utils/utils");
 
@@ -25,25 +26,25 @@ class CotizacionService {
         if (!cotizacion.idUsuario || !cotizacion.idCliente || !cotizacion.idAsegurado || !cotizacion.idSeguro) {
             throw new Error('Todos los campos son requeridos');
         }
-    
+
         // Validar entidades relacionadas
         const asegurado = await CotizacionRepository.getAseguradoById(cotizacion.idAsegurado);
         if (!asegurado) {
             throw new Error('El asegurado no existe');
         }
-    
+
         const seguro = await CotizacionRepository.getSeguroById(cotizacion.idSeguro);
         if (!seguro) {
             throw new Error('El seguro no existe');
         }
-    
+
         // Calcular la edad del asegurado
         const edad = Utils.calcularEdad(asegurado.fechaNacimiento);
-    
+
         // Define el precio base y ajusta según la edad
         let precioBase = seguro.precioBase; // Asegúrate de que el seguro tiene un precio base definido
         let incremento = 0;
-    
+
         if (edad >= 18 && edad <= 25) {
             incremento = 0.20; // 20% más
         } else if (edad >= 26 && edad <= 40) {
@@ -53,14 +54,20 @@ class CotizacionService {
         } else if (edad > 60) {
             incremento = 0.25; // 25% más
         }
-    
+
         cotizacion.precioFinal = precioBase + (precioBase * incremento);
         cotizacion.fechaCotizacion = new Date();
         cotizacion.estado = "pendiente";
-    
-        return await CotizacionRepository.createCotizacion(cotizacion);
+
+        // Incrementar el contador de emisiones del usuario
+        const nuevaCotizacion = await CotizacionRepository.createCotizacion(cotizacion);
+
+        // Incrementar el contador de emisiones del usuario
+        await UsuarioRepository.incrementCotizaciones(cotizacion.idUsuario);
+
+        return nuevaCotizacion;
     }
-    
+
 
     async updateCotizacion(id, cotizacion) {
         // Validar que todos los campos obligatorios estén presentes

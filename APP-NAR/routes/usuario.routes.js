@@ -27,6 +27,7 @@ router.post('/login/agente', UsuarioController.loginAgente); // Nueva ruta para 
 router.put('/inactive/:id', UsuarioController.updateUsuarioStatusInactive);
 router.put('/active/:id', UsuarioController.updateUsuarioStatusActive);
 router.put('/emision/:id', UsuarioController.registrarEmision);
+router.put('/cotizacion/:id', UsuarioController.registrarCotizacion);
 
 // Rutas para recuperación de contraseña
 router.post('/recuperacion/generar', UsuarioController.generarCodigoRecuperacion); // Generar código

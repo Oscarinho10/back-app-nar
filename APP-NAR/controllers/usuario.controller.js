@@ -234,8 +234,27 @@ class UsuarioController {
     async updatePostulanteRolAgente(req, res) {
         try {
             const usuarioId = req.params.id;
-            const usuario = await UsuarioService.updatePostulanteRolAgente(usuarioId, req.body);
-            res.json(usuario);
+
+            const resultado = await UsuarioService.updatePostulanteRolAgente(usuarioId);
+
+            // Obtener el usuario para extraer su correo
+            const usuario = await UsuarioRepository.getUsuarioById(usuarioId);
+            if (!usuario) {
+                throw new Error("Usuario no encontrado");
+            }
+
+            // Enviar el correo con la nueva contraseña
+            await EmailService.enviarCorreo(
+                usuario.correo,
+                "Bienvenido agente",
+                `Hola, Felicidades! Ya eres agente, tu contraseña es la misma para ingresar a la plataforma, una vez dentro puedes cambiar tu contraseña para que sea más segura, mucho éxito!`
+            );
+
+            res.status(200).json({
+                success: true,
+                message: "Agente aceptado correctamente y enviado a su respectivo correo mensaje de confirmación.",
+                data: resultado,
+            });
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
@@ -274,6 +293,15 @@ class UsuarioController {
     async registrarEmision(req, res) {
         try {
             const usuario = await UsuarioService.registrarEmision(req.params.id);
+            res.json(usuario);
+        } catch (error) {
+            res.status(400).send(error.message);
+        }
+    }
+
+    async registrarCotizacion(req, res) {
+        try {
+            const usuario = await UsuarioService.registrarCotizacion(req.params.id);
             res.json(usuario);
         } catch (error) {
             res.status(400).send(error.message);

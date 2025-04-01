@@ -166,6 +166,10 @@ class UsuarioRepository {
         return await Usuario.findByIdAndUpdate(id, { $inc: { emisiones: 1 } }, { new: true });
     }
 
+    async incrementCotizaciones(id) {
+        return await Usuario.findByIdAndUpdate(id, { $inc: { cotizaciones: 1 } }, { new: true });
+    }
+
     // Contar la cantidad de usuarios por rol
     async countUsuariosByRol(rol) {
         return await Usuario.countDocuments({ rol: rol });

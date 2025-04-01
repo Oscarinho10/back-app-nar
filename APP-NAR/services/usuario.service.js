@@ -359,6 +359,23 @@ class UsuarioService {
         return usuario;
     }
 
+    async registrarCotizacion(id) {
+        const usuario = await UsuarioRepository.getUsuarioById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        // Verificar que el rol del usuario sea "agente"
+        if (usuario.rol !== "agente") {
+            throw new Error('Solo los agentes pueden registrar cotizaciones');
+        }
+
+        // Incrementar el contador de emisiones
+        await UsuarioRepository.incrementCotizaciones(id);
+
+        return usuario;
+    }
+
     async login(correo, contrasena) {
         // Validar que los campos no estén vacíos
         if (!correo || !contrasena) {
