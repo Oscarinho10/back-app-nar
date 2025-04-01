@@ -13,6 +13,7 @@ router.get('/administradoresInactivos', UsuarioController.getAllUsuariosAdminist
 router.get('/postulantesInactivos', UsuarioController.getAllUsuariosInactivosProspectos);
 router.get('/postulantesActivos', UsuarioController.getAllUsuariosActivosProspectos);
 router.get('/id/:id', UsuarioController.getUsuarioById);
+router.get('/numeroCotizaciones/:id', UsuarioController.getCotizacionesAndEmisionesUsuarioById);
 router.get('/nombre/:nombre', UsuarioController.getUsuariosByNombre);
 router.post('/postulante', UsuarioController.createUsuarioPostulante);
 router.post('/agente', UsuarioController.createUsuarioAgente);

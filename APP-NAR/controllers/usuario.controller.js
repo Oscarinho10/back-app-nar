@@ -117,6 +117,27 @@ class UsuarioController {
         }
     }
 
+    async getCotizacionesAndEmisionesUsuarioById(req, res) {
+        try {
+            // Validar que el Id venga en la petición
+            const usuarioId = req.params.id;
+            if (!usuarioId || usuarioId.trim() === '') {
+                throw new Error('El Id del usuario es requerido');
+            }
+    
+            const cotizaciones = await UsuarioService.getCotizacionesByUsuarioId(usuarioId);
+            const emsiones = await UsuarioService.getEmisionesByUsuarioId(usuarioId);
+    
+            res.json({
+                mensaje: "Cotizaciones y emisiones por mes",
+                cotizaciones,
+                emsiones
+            });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }    
+
     async createUsuarioPostulante(req, res) {
         try {
             // Llamar a createUsuarioPostulante en lugar de createUsuario

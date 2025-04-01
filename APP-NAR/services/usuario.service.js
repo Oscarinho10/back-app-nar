@@ -49,6 +49,24 @@ class UsuarioService {
         return usuario;
     }
 
+    async getCotizacionesByUsuarioId(id) {
+        const usuario = await UsuarioRepository.getUsuarioById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+    
+        return usuario.cotizaciones;
+    }   
+    
+    async getEmisionesByUsuarioId(id) {
+        const usuario = await UsuarioRepository.getUsuarioById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+    
+        return usuario.emisiones;
+    } 
+
     async getUsuariosByNombre(nombre) {
         const usuarios = await UsuarioRepository.getUsuariosByNombre(nombre);
         if (!usuarios) {
