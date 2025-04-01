@@ -96,7 +96,8 @@ class SeguroController {
 
     async getAseguradorasByTipo(req, res) {
         try {
-            const { tipo } = req.query;
+            console.log(req.params); // Para verificar qué llega en la URL
+            const { tipo } = req.params; // Cambia req.query por req.params
             if (!tipo) {
                 throw new Error('El tipo es requerido');
             }
@@ -105,7 +106,8 @@ class SeguroController {
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
-    }
+    }    
 }
+
 
 module.exports = new SeguroController();
