@@ -81,17 +81,56 @@ class CotizacionController {
 
     async getCotizacionById(req, res) {
         try {
-            //Validar que el Id venga en la petición
+            // Validar que el Id venga en la petición
             const cotizacionId = req.params.id;
-            if (!cotizacionId || cotizacionId == '' || cotizacionId == null || cotizacionId == undefined) {
-                throw new Error('El Id de la cotizacion es requerido');
+            if (!cotizacionId || cotizacionId === '' || cotizacionId === null || cotizacionId === undefined) {
+                return res.status(400).json({ message: 'El Id de la cotización es requerido' });
             }
+
+            // Obtener la cotización por su ID
             const cotizacion = await CotizacionService.getCotizacionById(cotizacionId);
-            res.json(cotizacion);
+
+            // Si no se encuentra la cotización, responder con un error
+            if (!cotizacion) {
+                return res.status(404).json({ message: 'Cotización no encontrada' });
+            }
+
+            // Obtener detalles adicionales para la cotización
+            const asegurado = await AseguradoService.getAseguradoById(cotizacion.idAsegurado);
+            const seguro = await SeguroService.getSeguroById(cotizacion.idSeguro);
+            const cliente = await ClienteService.getClienteById(cotizacion.idCliente);
+
+            // Si falta alguna información, devolver un error
+            if (!asegurado || !seguro || !cliente) {
+                return res.status(404).json({ message: 'Faltan datos relacionados con la cotización' });
+            }
+
+            // Formatear los detalles para la respuesta
+            const cotizacionDetallada = {
+                idCotizacion: cotizacion.id,
+                nombreSeguro: seguro.nombre,
+                tipoSeguro: seguro.tipo,
+                nombreAsegurado: `${asegurado.nombre} ${asegurado.apellidoPaterno} ${asegurado.apellidoMaterno}`,
+                telefonoAsegurado: asegurado.telefono,
+                edadAsegurado: asegurado.edad,
+                correoAsegurado: asegurado.correo,
+                cobertura: seguro.cobertura,
+                precioFinal: cotizacion.precioFinal,
+                fechaCotizacion: cotizacion.fechaCotizacion,
+            };
+
+            // Enviar la respuesta
+            return res.status(200).json({
+                success: true,
+                message: 'Cotización obtenida con éxito',
+                data: cotizacionDetallada,
+            });
+
         } catch (error) {
-            res.status(400).json({ message: error.message });
+            res.status(500).json({ message: 'Error al obtener la cotización', error: error.message });
         }
     }
+
 
     async createCotizacion(req, res) {
         try {
@@ -120,7 +159,7 @@ class CotizacionController {
         try {
             const cotizacionId = req.params.id;
             const emisionData = req.body; // Asegúrate de que req.body contenga los datos necesarios de la emisión
-    
+
             // Llamamos al servicio para cambiar el estado de la cotización y crear la emisión
             const cotizacion = await CotizacionService.updateCotizacionStatusEmitida(cotizacionId, emisionData);
 
