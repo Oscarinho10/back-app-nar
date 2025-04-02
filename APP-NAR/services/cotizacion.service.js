@@ -1,5 +1,6 @@
 const CotizacionRepository = require("../repositories/cotizacion.repository");
 const UsuarioRepository = require("../repositories/usuario.repository");
+const EmisionRepository = require("../repositories/emision.repository");
 const Validaciones = require("../utils/validation");
 const Utils = require("../utils/utils");
 
@@ -114,15 +115,57 @@ class CotizacionService {
         return await CotizacionRepository.updateCotizacion(id, cotizacion);
     }
 
-    async updateCotizacionStatusEmitida(id) {
-        //Validar que la aseguradora exista
+    async updateCotizacionStatusEmitida(id, emision) {
+        // Validar que la cotización exista
         const cotizacion = await CotizacionRepository.getCotizacionById(id);
         if (!cotizacion) {
-            throw new Error('Cotizacion no encontrada')
+            throw new Error('Cotización no encontrada');
         }
-        return await CotizacionRepository.updateCotizacionStatusEmitida(id)
-
+    
+        // Validar que la cotización esté en estado pendiente antes de emitirla
+        if (cotizacion.estado !== 'pendiente') {
+            throw new Error('La cotización debe estar en estado "pendiente" para ser emitida');
+        }
+    
+        // Cambiar el estado de la cotización a "emitida"
+        await CotizacionRepository.updateCotizacionStatusEmitida(id);
+    
+        // Ahora, creamos la emisión
+        // Validamos los campos necesarios de la emisión
+        if (!emision.idUsuario || !emision.idCliente || !emision.idAsegurado ||
+            !emision.idSeguro || !emision.idCotizacion) {
+            throw new Error('Todos los campos son requeridos para la emisión');
+        }
+    
+        // Validar existencia de entidades relacionadas
+        const usuario = await EmisionRepository.getUsuarioById(emision.idUsuario);
+        if (!usuario) throw new Error('El usuario no existe');
+    
+        const cliente = await EmisionRepository.getClienteById(emision.idCliente);
+        if (!cliente) throw new Error('El cliente no existe');
+    
+        const asegurado = await EmisionRepository.getAseguradoById(emision.idAsegurado);
+        if (!asegurado) throw new Error('El asegurado no existe');
+    
+        const seguro = await EmisionRepository.getSeguroById(emision.idSeguro);
+        if (!seguro) throw new Error('El seguro no existe');
+    
+        const cotizacionEmitida = await EmisionRepository.getCotizacionById(emision.idCotizacion);
+        if (!cotizacionEmitida) throw new Error('La cotización no existe');
+    
+        // Asignar el precio final de la cotización al monto total de la emisión
+        emision.montoTotal = cotizacionEmitida.precioFinal;
+    
+        // Registrar la emisión
+        emision.fechaEmision = new Date();
+        const nuevaEmision = await EmisionRepository.createEmision(emision);
+    
+        // Incrementar el contador de emisiones del usuario
+        await UsuarioRepository.incrementEmisiones(emision.idUsuario);
+    
+        return nuevaEmision;
     }
+    
 
     async getCotizacionByIdUsuario(idUsuario) {
         return await CotizacionRepository.getCotizacionByIdUsuario(idUsuario);

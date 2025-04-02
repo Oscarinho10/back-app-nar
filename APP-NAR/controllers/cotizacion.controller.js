@@ -119,8 +119,16 @@ class CotizacionController {
     async updateCotizacionStatusEmitida(req, res) {
         try {
             const cotizacionId = req.params.id;
-            const cotizacion = await CotizacionService.updateCotizacionStatusEmitida(cotizacionId, req.body);
-            res.json(cotizacion);
+            const emisionData = req.body; // Asegúrate de que req.body contenga los datos necesarios de la emisión
+    
+            // Llamamos al servicio para cambiar el estado de la cotización y crear la emisión
+            const cotizacion = await CotizacionService.updateCotizacionStatusEmitida(cotizacionId, emisionData);
+
+            res.json({
+                success: true,
+                message: "Cotización emitida y emisión registrada con éxito",
+                data: cotizacion,
+            });
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
