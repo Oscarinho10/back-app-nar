@@ -53,6 +53,7 @@ class CotizacionController {
                     }
 
                     return {
+                        idCotizacion: cotizacion.id,
                         nombreCliente: `${cliente.nombre} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`,
                         nombreAsegurado: `${asegurado.nombre} ${asegurado.apellidoPaterno} ${asegurado.apellidoMaterno}`,
                         nombreSeguro: seguro.nombre,
