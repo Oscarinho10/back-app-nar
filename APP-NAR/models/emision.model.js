@@ -9,7 +9,6 @@ const EmisionSchema = mongoose.Schema({
     fechaEmision: { type: Date, default: Date.now },
     fechaInicio: { type: Date, required: true },
     fechaVencimiento: { type: Date, required: true },
-    metodoPago: { type: String, required: true},
     montoTotal: { type: Number, required: true },
     estado: { type: String, required: true, default: "activo" }
 })

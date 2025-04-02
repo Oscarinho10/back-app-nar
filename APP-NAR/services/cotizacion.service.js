@@ -130,41 +130,38 @@ class CotizacionService {
         // Cambiar el estado de la cotización a "emitida"
         await CotizacionRepository.updateCotizacionStatusEmitida(id);
     
-        // Ahora, creamos la emisión
-        // Validamos los campos necesarios de la emisión
-        if (!emision.idUsuario || !emision.idCliente || !emision.idAsegurado ||
-            !emision.idSeguro || !emision.idCotizacion) {
-            throw new Error('Todos los campos son requeridos para la emisión');
-        }
+        // Obtener la información relacionada con la cotización para la emisión
+        const cliente = await EmisionRepository.getClienteById(cotizacion.idCliente);
+        if (!cliente) throw new Error('El cliente relacionado con la cotización no existe');
     
-        // Validar existencia de entidades relacionadas
-        const usuario = await EmisionRepository.getUsuarioById(emision.idUsuario);
-        if (!usuario) throw new Error('El usuario no existe');
+        const asegurado = await EmisionRepository.getAseguradoById(cotizacion.idAsegurado);
+        if (!asegurado) throw new Error('El asegurado relacionado con la cotización no existe');
     
-        const cliente = await EmisionRepository.getClienteById(emision.idCliente);
-        if (!cliente) throw new Error('El cliente no existe');
+        const seguro = await EmisionRepository.getSeguroById(cotizacion.idSeguro);
+        if (!seguro) throw new Error('El seguro relacionado con la cotización no existe');
     
-        const asegurado = await EmisionRepository.getAseguradoById(emision.idAsegurado);
-        if (!asegurado) throw new Error('El asegurado no existe');
-    
-        const seguro = await EmisionRepository.getSeguroById(emision.idSeguro);
-        if (!seguro) throw new Error('El seguro no existe');
-    
-        const cotizacionEmitida = await EmisionRepository.getCotizacionById(emision.idCotizacion);
-        if (!cotizacionEmitida) throw new Error('La cotización no existe');
-    
-        // Asignar el precio final de la cotización al monto total de la emisión
-        emision.montoTotal = cotizacionEmitida.precioFinal;
-    
+        // Construir la emisión usando los datos de la cotización
+        const nuevaEmision = {
+            idUsuario: cotizacion.idUsuario, // Suponiendo que cotizacion tiene el idUsuario
+            idCliente: cotizacion.idCliente,
+            idAsegurado: cotizacion.idAsegurado,
+            idSeguro: cotizacion.idSeguro,
+            idCotizacion: cotizacion.id,
+            montoTotal: cotizacion.precioFinal,
+            fechaInicio: new Date(),
+            fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+            fechaEmision: new Date(),
+        };
+
         // Registrar la emisión
-        emision.fechaEmision = new Date();
-        const nuevaEmision = await EmisionRepository.createEmision(emision);
+        const emisionCreada = await EmisionRepository.createEmision(nuevaEmision);
     
         // Incrementar el contador de emisiones del usuario
-        await UsuarioRepository.incrementEmisiones(emision.idUsuario);
+        await UsuarioRepository.incrementEmisiones(cotizacion.idUsuario);
     
-        return nuevaEmision;
+        return emisionCreada;
     }
+    
     
 
     async getCotizacionByIdUsuario(idUsuario) {
