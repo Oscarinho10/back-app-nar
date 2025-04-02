@@ -4,7 +4,8 @@ const CotizacionController = require("../controllers/cotizacion.controller");
 const router = express.Router();
 
 router.get('/', CotizacionController.getAllCotizaciones);
-router.get('/pendientes', CotizacionController.getAllCotizacionesPendientes)
+router.get('/pendientes', CotizacionController.getAllCotizacionesPendientes);
+router.get('/pendientesByAgente/:idUsuario', CotizacionController.getAllCotizacionesPendientesByIdAgente);
 router.get('/id/:id', CotizacionController.getCotizacionById);
 router.post('/', CotizacionController.createCotizacion);
 router.put('/id/:id', CotizacionController.updateCotizacion);

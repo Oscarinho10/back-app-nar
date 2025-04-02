@@ -12,6 +12,13 @@ class CotizacionService {
         return await CotizacionRepository.getAllCotizacionesPendientes();
     }
 
+    async getAllCotizacionesPendientesByIdAgente(idUsuario) {
+        if (!idUsuario) {
+            throw new Error("El ID del usuario es requerido.");
+        }
+        return await CotizacionRepository.getAllCotizacionesPendientesByIdAgente(idUsuario);
+    }    
+
     async getCotizacionById(id) {
         const cotizacion = await CotizacionRepository.getCotizacionById(id);
         if (!cotizacion) {

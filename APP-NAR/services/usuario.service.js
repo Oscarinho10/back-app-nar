@@ -54,18 +54,18 @@ class UsuarioService {
         if (!usuario) {
             throw new Error('Usuario no encontrado');
         }
-    
+
         return usuario.cotizaciones;
-    }   
-    
+    }
+
     async getEmisionesByUsuarioId(id) {
         const usuario = await UsuarioRepository.getUsuarioById(id);
         if (!usuario) {
             throw new Error('Usuario no encontrado');
         }
-    
+
         return usuario.emisiones;
-    } 
+    }
 
     async getUsuariosByNombre(nombre) {
         const usuarios = await UsuarioRepository.getUsuariosByNombre(nombre);
@@ -253,6 +253,20 @@ class UsuarioService {
         if (!nuevaContrasena) throw new Error('La contraseña es requerida');
 
         Validaciones.validarContrasena(nuevaContrasena);
+
+        // Encriptar la nueva contraseña
+        const salt = await bcrypt.genSalt(10);
+        const contrasenaEncriptada = await bcrypt.hash(nuevaContrasena, salt);
+
+        return await UsuarioRepository.updateUsuario(id, { contrasena: contrasenaEncriptada });
+    }
+
+    async resetearContrasenaUsuario(id) {
+        const usuarioById = await UsuarioRepository.getUsuarioById(id);
+        if (!usuarioById) throw new Error('Usuario no encontrado');
+
+        // Usar el correo del usuario como contraseña
+        const nuevaContrasena = usuarioById.correo;
 
         // Encriptar la nueva contraseña
         const salt = await bcrypt.genSalt(10);

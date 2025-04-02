@@ -6,7 +6,7 @@ class EmailService {
             service: "gmail",
             auth: {
                 user: "multiaseguradoranar@gmail.com",  // Aquí pones tu correo directamente
-                pass: "wlcn hldh dmro kujr",        // Aquí pones tu contraseña directamente
+                pass: "bnst bkho jphr yqnz",        // Aquí pones tu contraseña directamente
             },
         });
     }

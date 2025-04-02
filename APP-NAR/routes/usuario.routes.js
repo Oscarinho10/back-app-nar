@@ -24,6 +24,7 @@ router.put('/updPostulante/:id', UsuarioController.updateUsuarioPostulante);
 router.put('/postulanteAgente/:id', UsuarioController.updatePostulanteRolAgente);
 router.put('/postulanteAceptado/:id', UsuarioController.updatePostulanteAceptado);
 router.put('/byAdmin/:id', UsuarioController.updateUsuarioByAdmin);
+router.put('/resetearContra/:id', UsuarioController.resetearContrasena);
 router.post('/login/agente', UsuarioController.loginAgente); // Nueva ruta para login de postulantes
 router.put('/inactive/:id', UsuarioController.updateUsuarioStatusInactive);
 router.put('/active/:id', UsuarioController.updateUsuarioStatusActive);

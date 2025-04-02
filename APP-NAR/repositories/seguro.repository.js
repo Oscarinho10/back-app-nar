@@ -11,6 +11,10 @@ class SeguroRepository {
         return await Seguro.find({ estado: 'activo' }); // Retorna solo seguros activos
     }
 
+    async getAllSegurosByTipAndAgeAsegurado() {
+        return await Seguro.find({ estado: 'activo' }); // Retorna solo seguros activos
+    }
+
     async getAseguradoraById(id) {
         return await Aseguradora.findById(id);
     }

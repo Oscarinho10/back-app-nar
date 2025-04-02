@@ -124,10 +124,10 @@ class UsuarioController {
             if (!usuarioId || usuarioId.trim() === '') {
                 throw new Error('El Id del usuario es requerido');
             }
-    
+
             const cotizaciones = await UsuarioService.getCotizacionesByUsuarioId(usuarioId);
             const emsiones = await UsuarioService.getEmisionesByUsuarioId(usuarioId);
-    
+
             res.json({
                 mensaje: "Cotizaciones y emisiones por mes",
                 cotizaciones,
@@ -136,7 +136,7 @@ class UsuarioController {
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
-    }    
+    }
 
     async createUsuarioPostulante(req, res) {
         try {
@@ -214,6 +214,38 @@ class UsuarioController {
             });
         } catch (error) {
             res.status(400).json({ message: error.message });
+        }
+    }
+
+    async resetearContrasena(req, res) {
+        try {
+            const usuarioId = req.params.id;
+
+            if (!usuarioId) {
+                return res.status(400).json({ message: "El Id del usuario es requerido" });
+            }
+
+            // Resetea la contraseña del usuario
+            const usuario = await UsuarioService.resetearContrasenaUsuario(usuarioId);
+
+            if (!usuario) {
+                return res.status(404).json({ message: "Usuario no encontrado" });
+            }
+
+            // Enviar correo con la nueva contraseña
+            await EmailService.enviarCorreo(
+                usuario.correo,
+                "Contraseña reseteada",
+                `Hola agente, tu contraseña ha sido reseteada por el Administrador, tu nueva contraseña es tu correo.`
+            );
+
+            res.status(200).json({
+                success: true,
+                message: "Contraseña reseteada correctamente y correo enviado correctamente.",
+                data: usuario,
+            });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
         }
     }
 

@@ -33,6 +33,16 @@ class CotizacionRepository {
         return await Cotizacion.find({ estado: 'pendiente' }); // Retorna solo seguros activos
     }
 
+    async getAllCotizacionesPendientesByIdAgente(idUsuario) {
+        try {
+            const cotizaciones = await Cotizacion.find({ estado: 'pendiente', idUsuario });
+            return cotizaciones;
+        } catch (error) {
+            console.error("Error al obtener cotizaciones pendientes:", error);
+            throw new Error("No se pudieron obtener las cotizaciones pendientes.");
+        }
+    }
+
     async createCotizacion(cotizacion) {
         return await Cotizacion.create(cotizacion);
     }
