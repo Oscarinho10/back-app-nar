@@ -207,22 +207,28 @@ class UsuarioController {
     async updateUsuarioPostulante(req, res) {
         try {
             const usuarioId = req.params.id;
-            const { nuevaContrasena } = req.body;
+            const { contrasenaActual, nuevaContrasena } = req.body;
 
+            // Validar que se envíen todas las credenciales necesarias
             if (!usuarioId || usuarioId.trim() === '') {
                 throw new Error('El Id del usuario es requerido');
             }
-
+            if (!contrasenaActual || contrasenaActual.trim() === '') {
+                throw new Error('La contraseña actual es requerida');
+            }
             if (!nuevaContrasena || nuevaContrasena.trim() === '') {
                 throw new Error('La nueva contraseña es requerida');
             }
 
-            const usuario = await UsuarioService.updateUsuarioPostulante(usuarioId, nuevaContrasena);
+            // Llamar al servicio con ambas contraseñas
+            const usuario = await UsuarioService.updateUsuarioPostulante(usuarioId, contrasenaActual, nuevaContrasena);
+
             res.json({
                 success: true,
                 message: "Contraseña actualizada correctamente.",
                 data: usuario
             });
+
         } catch (error) {
             res.status(400).json({ message: error.message });
         }

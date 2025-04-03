@@ -250,18 +250,30 @@ class UsuarioService {
         return await UsuarioRepository.updateUsuario(id, usuario);
     }
 
-    async updateUsuarioPostulante(id, nuevaContrasena) {
+    async updateUsuarioPostulante(id, contrasenaActual, nuevaContrasena) {
+        // Obtener el usuario por ID
         const usuarioById = await UsuarioRepository.getUsuarioById(id);
         if (!usuarioById) throw new Error('Usuario no encontrado');
 
-        if (!nuevaContrasena) throw new Error('La contraseña es requerida');
+        // Validar que la contraseña actual y nueva están definidas
+        if (!contrasenaActual || !nuevaContrasena) {
+            throw new Error('Ambas contraseñas son requeridas');
+        }
 
+        // Verificar si la contraseña actual coincide con la almacenada
+        const esCorrecta = await bcrypt.compare(contrasenaActual, usuarioById.contrasena);
+        if (!esCorrecta) {
+            throw new Error('La contraseña actual es incorrecta');
+        }
+
+        // Validar la nueva contraseña
         Validaciones.validarContrasena(nuevaContrasena);
 
         // Encriptar la nueva contraseña
         const salt = await bcrypt.genSalt(10);
         const contrasenaEncriptada = await bcrypt.hash(nuevaContrasena, salt);
 
+        // Actualizar la contraseña en la base de datos
         return await UsuarioRepository.updateUsuario(id, { contrasena: contrasenaEncriptada });
     }
 
