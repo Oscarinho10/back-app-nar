@@ -114,6 +114,7 @@ class SeguroController {
                     const aseguradora = await AseguradoraService.getAseguradoraById(seguro.idAseguradora);
                     return aseguradora
                         ? {
+                            idSeguro: seguro.id,
                             idAseguradora: seguro.idAseguradora,
                             nombreAseguradora: aseguradora.nombre,
                             nombreSeguro: seguro.nombre,
@@ -135,7 +136,6 @@ class SeguroController {
                 message: 'Seguros obtenidos con éxito',
                 data: segurosFiltrados,
             });
-
 
         } catch (error) {
             res.status(400).json({ message: error.message });
