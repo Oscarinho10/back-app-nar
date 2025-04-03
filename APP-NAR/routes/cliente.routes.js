@@ -9,5 +9,4 @@ router.get('/nombre/:nombre', ClienteController.getClientesByNombre);
 router.post('/', ClienteController.createCliente);
 router.get('/usuario/:idUsuario', ClienteController.getAllClientesByIdUsuario);
 
-
 module.exports = router;

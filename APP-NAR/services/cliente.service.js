@@ -6,7 +6,7 @@ class ClienteService {
     async getAllClientes() {
         return await ClienteRepository.getAllClientes();
     }
-    
+
     async getAllClientesByIdUsuario(idUsuario) {
         const clientes = await ClienteRepository.getAllClientesByIdUsuario(idUsuario);
         if (!clientes) {
