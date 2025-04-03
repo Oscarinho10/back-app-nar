@@ -130,7 +130,7 @@ class CotizacionService {
         // Cambiar el estado de la cotización a "emitida"
         await CotizacionRepository.updateCotizacionStatusEmitida(id);
     
-        // Obtener la información relacionada con la cotización para la emisión
+        // Obtener la información relacionada con la cotización
         const cliente = await EmisionRepository.getClienteById(cotizacion.idCliente);
         if (!cliente) throw new Error('El cliente relacionado con la cotización no existe');
     
@@ -140,9 +140,9 @@ class CotizacionService {
         const seguro = await EmisionRepository.getSeguroById(cotizacion.idSeguro);
         if (!seguro) throw new Error('El seguro relacionado con la cotización no existe');
     
-        // Construir la emisión usando los datos de la cotización
+        // Construir la emisión
         const nuevaEmision = {
-            idUsuario: cotizacion.idUsuario, // Suponiendo que cotizacion tiene el idUsuario
+            idUsuario: cotizacion.idUsuario,
             idCliente: cotizacion.idCliente,
             idAsegurado: cotizacion.idAsegurado,
             idSeguro: cotizacion.idSeguro,
@@ -152,15 +152,17 @@ class CotizacionService {
             fechaVencimiento: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
             fechaEmision: new Date(),
         };
-
+    
         // Registrar la emisión
         const emisionCreada = await EmisionRepository.createEmision(nuevaEmision);
     
         // Incrementar el contador de emisiones del usuario
         await UsuarioRepository.incrementEmisiones(cotizacion.idUsuario);
     
-        return emisionCreada;
+        // Retornar tanto la emisión como el cliente para usarlo en el controlador
+        return { emisionCreada, cliente, asegurado, seguro };
     }
+    
     
     
 

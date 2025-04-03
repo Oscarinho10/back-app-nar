@@ -28,6 +28,17 @@ class SeguroService {
         return aseguradora;
     }
 
+    async getAllSegurosByIdAseguradora(idAseguradora) {
+        const seguros = await SeguroRepository.getAllSegurosByAseguradoraId(idAseguradora);
+        
+        // Verificar si el array está vacío
+        if (seguros.length === 0) {
+            throw new Error('No se encontraron seguros para la aseguradora');
+        }
+        
+        return seguros;
+    }    
+
     async getSegurosByTipo(tipo) {
         return await SeguroRepository.getSegurosByTipo(tipo) || [];
     }

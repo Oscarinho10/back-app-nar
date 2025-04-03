@@ -7,6 +7,7 @@ router.get('/', SeguroController.getAllSeguros);
 router.get('/activos', SeguroController.getAllSegurosActivos)
 router.get('/id/:id', SeguroController.getSeguroById);
 router.get('/idAseguradora/:id', SeguroController.getAseguradoraById);
+router.get('/segurosByAseguradora/:idAseguradora', SeguroController.getAllSegurosByIdAseguradora);
 router.get('/tipo/:tipo', SeguroController.getAseguradorasByTipo);
 router.post('/', SeguroController.createSeguro);
 router.put('/:id', SeguroController.updateSeguro);

@@ -5,19 +5,20 @@ class EmailService {
         this.transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: "multiaseguradoras.nar@gmail.com",  // Aquí pones tu correo directamente
-                pass: "kylq bvxy fqfc ufzz",        // Aquí pones tu contraseña directamente
+                user: "multiaseguradoras.nar@gmail.com",
+                pass: "kylq bvxy fqfc ufzz",
             },
         });
     }
 
-    // Método para enviar correo
-    async enviarCorreo(destinatario, asunto, mensaje) {
+    // Método para enviar correos en texto plano y HTML
+    async enviarCorreo(destinatario, asunto, mensajeTexto, mensajeHTML = null) {
         const opcionesCorreo = {
-            from: `"Multi aseguradora NAR" multiaseguradoras.nar@gmail.com`, 
+            from: `"Multi Aseguradora NAR" <multiaseguradoras.nar@gmail.com>`, 
             to: destinatario,
             subject: asunto,
-            text: mensaje,
+            text: mensajeTexto,   // Contenido en texto plano
+            ...(mensajeHTML && { html: mensajeHTML })  // Si hay HTML, lo agrega
         };
 
         try {

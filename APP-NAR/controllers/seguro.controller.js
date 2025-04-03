@@ -52,6 +52,23 @@ class SeguroController {
         }
     }
 
+    async getAllSegurosByIdAseguradora(req, res) {
+        try {
+            const aseguradoraId = req.params.idAseguradora;
+    
+            // Validar que el Id venga en la petición
+            if (!aseguradoraId) {
+                return res.status(400).json({ message: 'El Id de la aseguradora es requerido' });
+            }
+    
+            const seguros = await SeguroService.getAllSegurosByIdAseguradora(aseguradoraId);
+            return res.json(seguros);
+            
+        } catch (error) {
+            return res.status(400).json({ message: error.message });
+        }
+    }    
+
     async createSeguro(req, res) {
         try {
             const seguro = await SeguroService.createSeguro(req.body);

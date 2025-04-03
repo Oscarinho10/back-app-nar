@@ -44,6 +44,10 @@ class SeguroRepository {
         // new: true -> devuelve el producto actualizado
         return await Seguro.findByIdAndUpdate(id, { estado: 'activo' }, { new: true });
     }
+
+    async getAllSegurosByAseguradoraId(idAseguradora) {
+        return await Seguro.find({ idAseguradora: idAseguradora });
+    }
 }
 
 module.exports = new SeguroRepository();

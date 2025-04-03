@@ -2,6 +2,8 @@ const CotizacionService = require("../services/cotizacion.service");
 const AseguradoService = require("../services/asegurado.service");
 const SeguroService = require("../services/seguro.service");
 const ClienteService = require("../services/cliente.service");
+const clienteRepository = require("../repositories/cliente.repository");
+const EmailService = require("../services/email.service");
 
 class CotizacionController {
     async getAllCotizaciones(req, res) {
@@ -158,15 +160,51 @@ class CotizacionController {
     async updateCotizacionStatusEmitida(req, res) {
         try {
             const cotizacionId = req.params.id;
-            const emisionData = req.body; // Asegúrate de que req.body contenga los datos necesarios de la emisión
+            const emisionData = req.body; // Datos adicionales si los hay
 
-            // Llamamos al servicio para cambiar el estado de la cotización y crear la emisión
-            const cotizacion = await CotizacionService.updateCotizacionStatusEmitida(cotizacionId, emisionData);
+            // Obtener la emisión y el cliente
+            const { emisionCreada, cliente, asegurado, seguro } = await CotizacionService.updateCotizacionStatusEmitida(cotizacionId, emisionData);
 
-            res.json({
+            // Obtener el usuario para enviarle el correo
+            const usuario = await clienteRepository.getClienteById(cliente.id);
+            if (!usuario) throw new Error('Usuario no encontrado para enviar el correo');
+
+            // Contenido en texto plano (opcional)
+            const mensajeTexto = `Tu póliza ha sido emitida con éxito. Revisa el correo en formato HTML.`;
+
+            // Contenido en HTML
+            const mensajeHTML = `
+            <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+                <h2 style="color: #1E88E5;">🎉 ¡Felicidades, ${cliente.nombre} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}!</h2>
+                <p>Tu póliza ha sido emitida con éxito. Aquí están los detalles:</p>
+                
+                <h3 style="color: #E53935;">📌 Información del Seguro:</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Nombre:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${seguro.nombre}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Tipo:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${seguro.tipo}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Coberturas:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${seguro.cobertura}</td></tr>
+                </table>
+                
+                <h3 style="color: #43A047;">👤 Información del Asegurado:</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Nombre:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${asegurado.nombre} ${asegurado.apellidoPaterno} ${asegurado.apellidoMaterno}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Edad:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${asegurado.edad}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Correo:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${asegurado.correo}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Teléfono:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${asegurado.telefono}</td></tr>
+                </table>
+                
+                <p style="margin-top: 20px;">Si tienes alguna duda, contáctanos.</p>
+                <p style="color: #757575; font-size: 14px;">Atentamente, <br> <strong>Equipo Multi Aseguradoras NAR</strong></p>
+            </div>
+            `;
+
+            // Enviar el correo
+            await EmailService.enviarCorreo(usuario.correo, "📜 Datos de Póliza Emitida", mensajeTexto, mensajeHTML);
+
+            res.status(200).json({
                 success: true,
-                message: "Cotización emitida y emisión registrada con éxito",
-                data: cotizacion,
+                message: "Póliza emitida correctamente y correo enviado.",
+                data: emisionCreada,
             });
         } catch (error) {
             res.status(400).json({ message: error.message });
