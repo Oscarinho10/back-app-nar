@@ -1,4 +1,5 @@
 const SeguroService = require("../services/seguro.service");
+const AseguradoraService = require("../services/seguro.service");
 
 class SeguroController {
     async getAllSeguros(req, res) {
@@ -102,11 +103,44 @@ class SeguroController {
                 throw new Error('El tipo es requerido');
             }
             const seguros = await SeguroService.getSegurosByTipo(tipo);
-            res.json(seguros);
+
+            if (!seguros || seguros.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron seguros para este tipo' });
+            }
+
+            // Obtener todas las aseguradoras de los seguros encontrados
+            const detallesSeguros = await Promise.all(
+                seguros.map(async (seguro) => {
+                    const aseguradora = await AseguradoraService.getAseguradoraById(seguro.idAseguradora);
+                    return aseguradora
+                        ? {
+                            idAseguradora: seguro.idAseguradora,
+                            nombreAseguradora: aseguradora.nombre,
+                            nombreSeguro: seguro.nombre,
+                            montoPrima: seguro.precioBase,
+                        }
+                        : null;
+                })
+            );
+
+            // Filtrar seguros sin aseguradora
+            const segurosFiltrados = detallesSeguros.filter((seguro) => seguro !== null);
+
+            if (segurosFiltrados.length === 0) {
+                return res.status(404).json({ message: 'Faltan datos relacionados con el seguro' });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Seguros obtenidos con éxito',
+                data: segurosFiltrados,
+            });
+
+
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
-    }    
+    }
 }
 
 
