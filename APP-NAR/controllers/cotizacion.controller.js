@@ -81,6 +81,59 @@ class CotizacionController {
         }
     }
 
+    async getAllCotizacionesPendientesByIdCliente(req, res) {
+        try {
+            const { idCliente } = req.params; // O req.body, dependiendo de cómo lo envíes
+
+            if (!idCliente) {
+                return res.status(400).json({ message: "El ID del cliente es requerido." });
+            }
+
+            // Obtener todas las cotizaciones pendientes del agente
+            const cotizaciones = await CotizacionService.getAllCotizacionesPendientesByIdCliente(idCliente);
+
+            if (!cotizaciones.length) {
+                return res.status(200).json({ success: true, message: "No hay cotizaciones pendientes.", data: [] });
+            }
+
+            // Obtener detalles adicionales para cada cotización
+            const cotizacionesDetalladas = await Promise.all(
+                cotizaciones.map(async (cotizacion) => {
+                    const asegurado = await AseguradoService.getAseguradoById(cotizacion.idAsegurado);
+                    const seguro = await SeguroService.getSeguroById(cotizacion.idSeguro);
+                    const cliente = await ClienteService.getClienteById(cotizacion.idCliente); // Se corrigió esta línea
+
+                    if (!asegurado || !seguro || !cliente) {
+                        return null; // Filtrar después si falta información
+                    }
+
+                    return {
+                        idCotizacion: cotizacion.id,
+                        nombreCliente: `${cliente.nombre} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`,
+                        nombreAsegurado: `${asegurado.nombre} ${asegurado.apellidoPaterno} ${asegurado.apellidoMaterno}`,
+                        nombreSeguro: seguro.nombre,
+                        tipoSeguro: seguro.tipo,
+                        cobertura: seguro.cobertura,
+                        precioFinal: cotizacion.precioFinal,
+                        fechaCotizacion: cotizacion.fechaCotizacion,
+                    };
+                })
+            );
+
+            // Filtrar cotizaciones con información incompleta
+            const cotizacionesFiltradas = cotizacionesDetalladas.filter((cot) => cot !== null);
+
+            return res.status(200).json({
+                success: true,
+                message: "Cotizaciones obtenidas con éxito",
+                data: cotizacionesFiltradas
+            });
+
+        } catch (error) {
+            res.status(500).json({ message: "Error al obtener cotizaciones pendientes", error: error.message });
+        }
+    }
+
     async getCotizacionById(req, res) {
         try {
             // Validar que el Id venga en la petición

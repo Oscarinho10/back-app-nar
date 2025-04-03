@@ -43,6 +43,16 @@ class CotizacionRepository {
         }
     }
 
+    async getAllCotizacionesPendientesByIdCliente(idCliente) {
+        try {
+            const cotizaciones = await Cotizacion.find({ estado: 'pendiente', idCliente });
+            return cotizaciones;
+        } catch (error) {
+            console.error("Error al obtener cotizaciones pendientes:", error);
+            throw new Error("No se pudieron obtener las cotizaciones pendientes.");
+        }
+    }
+
     async createCotizacion(cotizacion) {
         return await Cotizacion.create(cotizacion);
     }
