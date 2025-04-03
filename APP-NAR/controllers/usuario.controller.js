@@ -59,6 +59,17 @@ class UsuarioController {
         }
     }
 
+    async getAllUsuariosAgentesInactivosSolicitudReactivacion(req, res) {
+        try {
+            const usuarios = await UsuarioService.getAllUsuariosAgentesInactivosSolicitudReactivacion();
+            // Por defecto siempre retorna 200 si no se le especifica el status
+            // 200 -> éxito | OK 
+            res.status(200).json(usuarios);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async getAllUsuariosAdministradoresActivos(req, res) {
         try {
             const usuarios = await UsuarioService.getAllUsuariosAdministradoresActivos();
@@ -278,6 +289,28 @@ class UsuarioController {
         try {
             const usuarioId = req.params.id;
             const usuario = await UsuarioService.updateUsuarioStatusActive(usuarioId, req.body);
+
+            await EmailService.enviarCorreo(
+                usuario.correo,
+                "Usuario Reactivado",
+                `Hola, Bienvenido nuevamente! Has sido reactivado.`
+            );
+
+            res.status(200).json({
+                success: true,
+                message: "Usuario reactivado correctamente y enviado a su correo el mensaje.",
+                data: usuario,
+            });
+
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async updateAgenteStatusReactivaciones(req, res) {
+        try {
+            const usuarioId = req.params.id;
+            const usuario = await UsuarioService.updateAgenteStatusReactivaciones(usuarioId, req.body);
             res.json(usuario);
         } catch (error) {
             res.status(400).json({ message: error.message });

@@ -23,6 +23,10 @@ class UsuarioRepository {
         return await Usuario.find({ estado: 'inactivo', rol: 'agente' }); // Retorna solo usuarios activos
     }
 
+    async getAllUsuariosAgentesInactivosSolicitudReactivacion() {
+        return await Usuario.find({ estado: 'inactivo', rol: 'agente', reactivacionSolicitada: 'activa' }); // Retorna solo usuarios activos
+    }
+
     async getAllUsuariosAdministradoresActivos() {
         return await Usuario.find({ estado: 'activo', rol: 'administrador' }); // Retorna solo usuarios activos
     }
@@ -108,7 +112,18 @@ class UsuarioRepository {
     }
 
     async updateUsuarioStatusActive(id) {
-        return await Usuario.findByIdAndUpdate(id, { estado: 'activo' }, { new: true });
+        return await Usuario.findByIdAndUpdate(
+            id, 
+            { 
+                estado: 'activo', 
+                reactivacionSolicitida: 'inactiva' 
+            }, 
+            { new: true } // Devuelve el documento actualizado
+        );
+    }
+
+    async updateAgenteStatusReactivaciones(id) {
+        return await Usuario.findByIdAndUpdate(id, { reactivacionSolicitada: 'activa' }, { new: true });
     }
 
     async updatePostulanteAceptado(id, contrasena) {

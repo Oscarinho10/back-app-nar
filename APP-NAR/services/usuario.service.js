@@ -24,6 +24,10 @@ class UsuarioService {
         return await UsuarioRepository.getAllUsuariosAgentesInactivos();
     }
 
+    async getAllUsuariosAgentesInactivosSolicitudReactivacion() {
+        return await UsuarioRepository.getAllUsuariosAgentesInactivosSolicitudReactivacion();
+    }
+
     async getAllUsuariosAdministradoresActivos() {
         return await UsuarioRepository.getAllUsuariosAdministradoresActivos();
     }
@@ -336,7 +340,16 @@ class UsuarioService {
         await UsuarioRepository.incrementReactivaciones(id);
 
         return await UsuarioRepository.updateUsuarioStatusActive(id)
+    }
 
+    async updateAgenteStatusReactivaciones(id) {
+        //Validar que la aseguradora exista
+        const usuario = await UsuarioRepository.getUsuarioById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado')
+        }
+
+        return await UsuarioRepository.updateAgenteStatusReactivaciones(id);
     }
 
     async updatePostulanteRolAgente(id) {
@@ -346,7 +359,7 @@ class UsuarioService {
             throw new Error('Usuario no encontrado')
         }
 
-        return await UsuarioRepository.updatePostulanteRolAgente(id)
+        return await UsuarioRepository.updatePostulanteRolAgente(id);
 
     }
 

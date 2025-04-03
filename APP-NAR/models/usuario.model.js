@@ -13,7 +13,8 @@ const UsuarioSchema = mongoose.Schema({
     fechaRegistro: { type: Date, default: Date.now },
     estado: { type: String, required: true, default: "activo" },
     codigoRecuperacion: { type: String, default: null }, // Código para recuperar contraseña
-    expiracionCodigo: { type: Date, default: null },     // Fecha de expiración del código
+    expiracionCodigo: { type: Date, default: null },
+    reactivacionSolicitada: {type: String, default: "inactiva"},     // Fecha de expiración del código
     reactivaciones: { type: Number, default: 0 }, // Contador de reactivaciones
     emisiones: { type: Number, default: 0 }, // Contador de emisiones
     cotizaciones: { type: Number, default: 0 } // Contador de emisiones

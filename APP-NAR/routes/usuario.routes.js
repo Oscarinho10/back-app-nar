@@ -8,6 +8,7 @@ router.get('/activos', UsuarioController.getAllUsuariosActivos);
 router.get('/inactivos', UsuarioController.getAllUsuariosInactivos);
 router.get('/agentesActivos', UsuarioController.getAllUsuariosAgentesActivos);
 router.get('/agentesInactivos', UsuarioController.getAllUsuariosAgentesInactivos);
+router.get('/agentesInactivosEnReactivacion', UsuarioController.getAllUsuariosAgentesInactivosSolicitudReactivacion);
 router.get('/administradoresActivos', UsuarioController.getAllUsuariosAdministradoresActivos);
 router.get('/administradoresInactivos', UsuarioController.getAllUsuariosAdministradoresInactivos);
 router.get('/postulantesInactivos', UsuarioController.getAllUsuariosInactivosProspectos);
@@ -28,6 +29,7 @@ router.put('/resetearContra/:id', UsuarioController.resetearContrasena);
 router.post('/login/agente', UsuarioController.loginAgente); // Nueva ruta para login de postulantes
 router.put('/inactive/:id', UsuarioController.updateUsuarioStatusInactive);
 router.put('/active/:id', UsuarioController.updateUsuarioStatusActive);
+router.put('/reactivacionesActive/:id', UsuarioController.updateAgenteStatusReactivaciones);
 router.put('/emision/:id', UsuarioController.registrarEmision);
 router.put('/cotizacion/:id', UsuarioController.registrarCotizacion);
 
