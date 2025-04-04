@@ -189,6 +189,7 @@ class UsuarioRepository {
     async countUsuariosByRol(rol) {
         return await Usuario.countDocuments({ rol: rol });
     }
+   
 }
 
 module.exports = new UsuarioRepository();

@@ -547,6 +547,27 @@ class UsuarioService {
 
         return "Contraseña actualizada correctamente";
     }
+
+    async getUsuarioEmisionesYCotizaciones(id) {
+        // Obtener el usuario por ID
+        const usuario = await UsuarioRepository.getUsuarioById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+    
+        // Verificar que el rol del usuario sea "agente"
+        if (usuario.rol !== 'agente') {
+            throw new Error('Solo los usuarios con rol de agente pueden acceder a esta información');
+        }
+    
+        // Devolver solo los campos id, emisiones y cotizaciones
+        return {
+            id: usuario._id,
+            emisiones: usuario.emisiones,
+            cotizaciones: usuario.cotizaciones
+        };
+    }    
+
 }
 
 module.exports = new UsuarioService();

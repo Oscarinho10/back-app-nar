@@ -537,6 +537,24 @@ class UsuarioController {
             res.status(400).json({ message: error.message });
         }
     }
+
+    async getUsuarioEmisionesYCotizaciones(req, res) {
+        try {
+            // Validar que el Id venga en la petición
+            const usuarioId = req.params.id;
+            if (!usuarioId || usuarioId.trim() === '') {
+                throw new Error('El Id del usuario es requerido');
+            }
+
+            // Llamar al servicio para obtener las emisiones y cotizaciones del usuario
+            const resultado = await UsuarioService.getUsuarioEmisionesYCotizaciones(usuarioId);
+
+            // Enviar la respuesta con los datos obtenidos
+            res.status(200).json(resultado);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
 }
 
 module.exports = new UsuarioController();

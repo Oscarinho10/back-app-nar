@@ -32,6 +32,7 @@ router.put('/active/:id', UsuarioController.updateUsuarioStatusActive);
 router.put('/reactivacionesActive/:id', UsuarioController.updateAgenteStatusReactivaciones);
 router.put('/emision/:id', UsuarioController.registrarEmision);
 router.put('/cotizacion/:id', UsuarioController.registrarCotizacion);
+router.get('/cotizacionesYEmisiones/:id', UsuarioController.getUsuarioEmisionesYCotizaciones);
 
 // Rutas para recuperación de contraseña
 router.post('/recuperacion/generar', UsuarioController.generarCodigoRecuperacion); // Generar código
