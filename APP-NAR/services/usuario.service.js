@@ -566,8 +566,8 @@ class UsuarioService {
             emisiones: usuario.emisiones,
             cotizaciones: usuario.cotizaciones
         };
-    }    
-
+    }  
+    
 }
 
 module.exports = new UsuarioService();
