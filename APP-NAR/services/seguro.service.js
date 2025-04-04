@@ -46,7 +46,7 @@ class SeguroService {
     async createSeguro(seguro) {
         // Validar que todos los campos obligatorios estén presentes
         if (!seguro.idAseguradora || !seguro.nombre || !seguro.tipo ||
-            !seguro.cobertura || !seguro.precioBase || !seguro.periodoCobertura) {
+            !seguro.cobertura || !seguro.precioBase) {
             throw new Error('Todos los campos son requeridos');
         }
 
@@ -77,7 +77,7 @@ class SeguroService {
 
         // Validar que todos los campos estén presentes
         if (!seguro.idAseguradora || !seguro.nombre || !seguro.tipo ||
-            !seguro.cobertura || !seguro.precioBase || !seguro.periodoCobertura) {
+            !seguro.cobertura || !seguro.precioBase) {
             throw new Error('Todos los campos son requeridos');
         }
 

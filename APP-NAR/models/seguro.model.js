@@ -6,7 +6,6 @@ const SeguroSchema = mongoose.Schema({
     tipo: { type: String, required: true },
     cobertura: { type: String, required: true },
     precioBase: { type: Number, required: true },
-    periodoCobertura: { type: String, required: true },
     estado: { type: String, required: true, default: "activo" }
 })
 
