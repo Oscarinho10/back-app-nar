@@ -112,7 +112,7 @@ class DocumentosPersonaController {
             await EmailService.enviarCorreo(
                 usuario.correo,
                 "Documento rechazado",
-                `Hola, lamentamos informarte que el documento "Comprobante de Domicilio", ha sido rechazado. Sube lo antes posible nuevamente tu documento, se habilitará ese campo en tu pestaña para que lo puedas subir.`
+                `Hola, lamentamos informarte que uno de tus documentos ha sido rechazado. Sube lo antes posible nuevamente tu documento, se habilitará solo ese campo en tu pestaña para que lo puedas subir.`
             );
 
             res.json({ message: 'Documento eliminado correctamente y correo enviado al usuario', result });
