@@ -1,10 +1,13 @@
 const DocumentosPersonaService = require('../services/documentos_persona.service');
+const DocumentosRepository = require('../repositories/documentos_persona.repository');
+const PersonaRepository = require('../repositories/usuario.repository');
+const EmailService = require("../services/email.service");
 const { getGFS } = require('../config/gridfs');
 const mongoose = require('mongoose');
 
 class DocumentosPersonaController {
 
-    async createDocumentosPersona(req, res) {
+    async createDocumentoPersonaComprobanteDomicilio(req, res) {
         console.log(req.body);
         if (!req.files || Object.keys(req.files).length === 0) {
             return res.status(400).send('No se subieron archivos.');
@@ -55,7 +58,7 @@ class DocumentosPersonaController {
                 throw new Error('El id del usuario es requerido');
             }
 
-            const documentoPersonaCreado = await DocumentosPersonaService.createDocumentosPersona(idUsuario, idDocumentoGuardado, nombreDocumentoGuardado);
+            const documentoPersonaCreado = await DocumentosPersonaService.createDocumentoPersonaComprobanteDomicilio(idUsuario, idDocumentoGuardado, nombreDocumentoGuardado);
             resp.push(documentoPersonaCreado);
         }
 
@@ -79,14 +82,53 @@ class DocumentosPersonaController {
         }
     }
 
-    async updateStatusDocumentosPersona(req, res) {
+    // documentos_persona.controller.js
+    // documentos_persona.controller.js
+    async deleteDocumentoPersonaComprobanteDomicilio(req, res) {
+        try {
+            const documentoId = req.params.id;
+            if (!documentoId) {
+                throw new Error('El id del documento es requerido');
+            }
+
+            // Obtener el documento para acceder al idUsuario
+            const documento = await DocumentosRepository.getDocumentoComprobanteDomicilioById(documentoId);
+            if (!documento) {
+                throw new Error(`El documento con ID ${documentoId} no existe`);
+            }
+
+            const usuarioId = documento.idUsuario;
+
+            // Eliminar el documento
+            const result = await DocumentosPersonaService.deleteDocumentoPersonaComprobanteDomicilio(documentoId);
+
+            // Obtener el usuario para extraer su correo
+            const usuario = await PersonaRepository.getUsuarioById(usuarioId);
+            if (!usuario) {
+                throw new Error("Usuario no encontrado");
+            }
+
+            // Enviar el correo informando sobre la eliminación del documento
+            await EmailService.enviarCorreo(
+                usuario.correo,
+                "Documento rechazado",
+                `Hola, lamentamos informarte que el documento "Comprobante de Domicilio", ha sido rechazado. Sube lo antes posible nuevamente tu documento, se habilitará ese campo en tu pestaña para que lo puedas subir.`
+            );
+
+            res.json({ message: 'Documento eliminado correctamente y correo enviado al usuario', result });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async updateStatusAceptadoDocumentoPersonaDomicilio(req, res) {
         try {
             const documentoId = req.params.id;
             if (!documentoId || documentoId == '' || documentoId == null || documentoId == undefined) {
                 throw new Error('El id del documento es requerido');
             }
 
-            const documentoPersona = await DocumentosPersonaService.updateStatusDocumentosPersona(documentoId);
+            const documentoPersona = await DocumentosPersonaService.updateStatusAceptadoDocumentoPersonaDomicilio(documentoId);
 
             res.json(documentoPersona);
 
@@ -97,14 +139,14 @@ class DocumentosPersonaController {
 
     }
 
-    async getDocumentosPersonaById(req, res) {
+    async getDocumentoComprobanteDomicilioByPersonaId(req, res) {
         try {
             const idUsuario = req.params.id;
             if (!idUsuario || idUsuario == '' || idUsuario == null || idUsuario == undefined) {
                 throw new Error('El id del usuario es requerido');
             }
 
-            const documentosPersona = await DocumentosPersonaService.getDocumentosPersonaById(idUsuario);
+            const documentosPersona = await DocumentosPersonaService.getDocumentoComprobanteDomicilioByPersonaId(idUsuario);
 
             res.json(documentosPersona);
         } catch (error) {
@@ -112,6 +154,40 @@ class DocumentosPersonaController {
 
         }
     }
+
+    async getDocumentoComprobanteDomicilioById(req, res) {
+        try {
+            const idDocumento = req.params.id;
+            if (!idDocumento || idDocumento == '' || idDocumento == null || idDocumento == undefined) {
+                throw new Error('El id del usuario es requerido');
+            }
+
+            const documentosPersona = await DocumentosPersonaService.getDocumentoComprobanteDomicilioById(idDocumento);
+
+            res.json(documentosPersona);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+
+        }
+    }
+
+    // async updateDocumentoPersonaComprobanteDomicilio(req, res) {
+    //     try {
+    //         const documentoAnteriorId = req.params.id;
+    //         const nuevoDocumentoId = req.body.nuevoIdDocumento;
+
+    //         if (!documentoAnteriorId || !nuevoDocumentoId) {
+    //             throw new Error('Se requieren el ID del documento anterior y el nuevo ID del documento');
+    //         }
+
+    //         const resultado = await DocumentosPersonaService.updateDocumentoPersonaComprobanteDomicilio(documentoAnteriorId, nuevoDocumentoId);
+
+    //         res.json({ message: 'Documento actualizado correctamente', resultado });
+    //     } catch (error) {
+    //         res.status(400).json({ message: error.message });
+    //     }
+    // }
+
 
 }
 

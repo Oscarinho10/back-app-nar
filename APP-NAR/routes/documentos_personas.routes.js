@@ -3,13 +3,19 @@ const express = require('express');
 const router = express.Router();
 
 
-router.post('/upload', DocumentosPersonaController.createDocumentosPersona);
+router.post('/uploadComprobanteDomicilio', DocumentosPersonaController.createDocumentoPersonaComprobanteDomicilio);
 
 // Ruta para obtener un archivo por ID - descargarlo
-router.get('/files/:id', DocumentosPersonaController.downloadFile);
+router.get('/descargarComprobanteDomicilio/:id', DocumentosPersonaController.downloadFile);
+
 //Consultar documentos de una persona
-router.get('/files/persona/:id', DocumentosPersonaController.getDocumentosPersonaById);
+router.get('/comprobanteDomicilio/postulante/:id', DocumentosPersonaController.getDocumentoComprobanteDomicilioByPersonaId);
 
 //Cambiar el estado del documento
-router.put('/files/:id', DocumentosPersonaController.updateStatusDocumentosPersona);
+router.delete('/rechazarComprobanteDomicilio/:id', DocumentosPersonaController.deleteDocumentoPersonaComprobanteDomicilio);
+
+router.put('/aceptarComprobanteDomicilio/:id', DocumentosPersonaController.updateStatusAceptadoDocumentoPersonaDomicilio);
+
+// router.put('/updateDocumento/:id', DocumentosPersonaController.updateDocumentoPersonaComprobanteDomicilio);
+
 module.exports = router;

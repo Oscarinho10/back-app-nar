@@ -5,8 +5,8 @@ class EmailService {
         this.transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: "multiaseguradoras.nar@gmail.com",
-                pass: "kylq bvxy fqfc ufzz",
+                user: "nar.multiaseguradora@gmail.com",
+                pass: "zvjp rctt easz yiuo",
             },
         });
     }
@@ -14,7 +14,7 @@ class EmailService {
     // Método para enviar correos en texto plano y HTML
     async enviarCorreo(destinatario, asunto, mensajeTexto, mensajeHTML = null) {
         const opcionesCorreo = {
-            from: `"Multi Aseguradora NAR" <multiaseguradoras.nar@gmail.com>`, 
+            from: `"Multi Aseguradora NAR" <nar.multiaseguradora@gmail.com>`, 
             to: destinatario,
             subject: asunto,
             text: mensajeTexto,   // Contenido en texto plano
