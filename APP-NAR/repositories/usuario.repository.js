@@ -111,6 +111,10 @@ class UsuarioRepository {
         return await Usuario.findByIdAndUpdate(id, { estado: 'inactivo' }, { new: true });
     }
 
+    async updateUsuarioStatusDenegado(id) {
+        return await Usuario.findByIdAndUpdate(id, { estado: 'denegado' }, { new: true });
+    }
+
     async updateUsuarioStatusActive(id) {
         return await Usuario.findByIdAndUpdate(
             id, 

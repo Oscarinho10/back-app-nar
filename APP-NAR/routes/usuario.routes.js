@@ -29,6 +29,7 @@ router.put('/resetearContra/:id', UsuarioController.resetearContrasena);
 router.post('/login/agente', UsuarioController.loginAgente); // Nueva ruta para login de postulantes
 router.put('/inactive/:id', UsuarioController.updateUsuarioStatusInactive);
 router.put('/active/:id', UsuarioController.updateUsuarioStatusActive);
+router.put('/denegado/:id', UsuarioController.updateUsuarioStatusDenegado);
 router.put('/reactivacionesActive/:id', UsuarioController.updateAgenteStatusReactivaciones);
 router.put('/emision/:id', UsuarioController.registrarEmision);
 router.put('/cotizacion/:id', UsuarioController.registrarCotizacion);

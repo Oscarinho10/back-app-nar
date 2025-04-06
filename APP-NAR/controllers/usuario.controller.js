@@ -285,7 +285,18 @@ class UsuarioController {
         try {
             const usuarioId = req.params.id;
             const usuario = await UsuarioService.updateUsuarioStatusInactive(usuarioId, req.body);
-            res.json(usuario);
+
+            await EmailService.enviarCorreo(
+                usuario.correo,
+                "Usuario Inactivado",
+                `Hola, lamentamos informarte que has sido inactivado..`
+            );
+
+            res.status(200).json({
+                success: true,
+                message: "Usuario inactivado correctamente y enviado a su correo el mensaje.",
+                data: usuario,
+            });
         } catch (error) {
             res.status(400).json({ message: error.message });
         }
@@ -299,12 +310,34 @@ class UsuarioController {
             await EmailService.enviarCorreo(
                 usuario.correo,
                 "Usuario Reactivado",
-                `Hola, Bienvenido nuevamente! Has sido reactivado.`
+                `Hola, bienvenido nuevamente! Has sido reactivado.`
             );
 
             res.status(200).json({
                 success: true,
                 message: "Usuario reactivado correctamente y enviado a su correo el mensaje.",
+                data: usuario,
+            });
+
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
+    async updateUsuarioStatusDenegado(req, res) {
+        try {
+            const usuarioId = req.params.id;
+            const usuario = await UsuarioService.updateUsuarioStatusDenegado(usuarioId, req.body);
+
+            await EmailService.enviarCorreo(
+                usuario.correo,
+                "Usuario Denegado",
+                `Hola, lamentamos informarte que después de una revisión, has sido denegado, agradecemos mucho tu atención y participación.`
+            );
+
+            res.status(200).json({
+                success: true,
+                message: "Usuario denegado correctamente y enviado a su correo el mensaje.",
                 data: usuario,
             });
 

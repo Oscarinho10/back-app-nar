@@ -354,6 +354,16 @@ class UsuarioService {
         return await UsuarioRepository.updateUsuarioStatusActive(id)
     }
 
+    async updateUsuarioStatusDenegado(id) {
+        //Validar que la aseguradora exista
+        const usuario = await UsuarioRepository.getUsuarioById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado')
+        }
+
+        return await UsuarioRepository.updateUsuarioStatusDenegado(id)
+    }
+
     async updateAgenteStatusReactivaciones(id) {
         //Validar que la aseguradora exista
         const usuario = await UsuarioRepository.getUsuarioById(id);
@@ -438,11 +448,20 @@ class UsuarioService {
         if (!correo || !contrasena) {
             throw new Error("Correo y contraseña son obligatorios");
         }
-
+    
         // Buscar usuario por correo
         const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
         if (!usuario) {
             throw new Error("Correo o contraseña incorrectos");
+        }
+    
+        // Verificar si el usuario está inactivo y no es administrador
+        if (usuario.estado ===  "inactivo" && usuario.rol === "administrador") {
+            throw new Error("Tu cuenta está inactiva. Contacta al administrador.");
+        }
+
+        if (usuario.estado ===  "denegado" && usuario.rol === "postulante") {
+            throw new Error("Tu cuenta está inactiva. Contacta al administrador.");
         }
 
         // Comparar contraseñas
@@ -450,14 +469,14 @@ class UsuarioService {
         if (!esPasswordValido) {
             throw new Error("Correo o contraseña incorrectos");
         }
-
+    
         // Retornar usuario si la autenticación es correcta
         return {
             _id: usuario._id,
             correo: usuario.correo,
             rol: usuario.rol // Incluye explícitamente el rol
         };
-    }
+    }    
 
     async loginAgente(correo, contrasena) {
         // Validar que los campos no estén vacíos
