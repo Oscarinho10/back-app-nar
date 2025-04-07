@@ -35,7 +35,7 @@ class AseguradoraService {
 
     async createAseguradora(aseguradora) {
         //Validar que todos los campos obligatorios vengan
-        if (!aseguradora.nombre || !aseguradora.informacion || !aseguradora.seguros || !aseguradora.nombreContacto || !aseguradora.correoContacto || !aseguradora.telefonoContacto) {
+        if (!aseguradora.nombre || !aseguradora.informacion || !aseguradora.nombreContacto || !aseguradora.correoContacto || !aseguradora.telefonoContacto) {
             throw new Error('Todos los campos son requeridos');
         }
 
@@ -73,7 +73,7 @@ class AseguradoraService {
         }
 
         //Validar que todos los campos vengan en el body
-        if (!aseguradora.nombre || !aseguradora.informacion || !aseguradora.seguros || !aseguradora.nombreContacto || !aseguradora.correoContacto || !aseguradora.telefonoContacto) {
+        if (!aseguradora.nombre || !aseguradora.informacion || !aseguradora.nombreContacto || !aseguradora.correoContacto || !aseguradora.telefonoContacto) {
             throw new Error('Todos los campos son requeridos');
         }
 

@@ -31,11 +31,6 @@ class SeguroService {
     async getAllSegurosByIdAseguradora(idAseguradora) {
         const seguros = await SeguroRepository.getAllSegurosByAseguradoraId(idAseguradora);
         
-        // Verificar si el array está vacío
-        if (seguros.length === 0) {
-            throw new Error('No se encontraron seguros para la aseguradora');
-        }
-        
         return seguros;
     }    
 
