@@ -18,6 +18,8 @@ const UsuarioSchema = mongoose.Schema({
     reactivaciones: { type: Number, default: 0 }, // Contador de reactivaciones
     emisiones: { type: Number, default: 0 }, // Contador de emisiones
     cotizaciones: { type: Number, default: 0 } // Contador de emisiones
+}, {
+    timestamps: true // Esto agrega createdAt y updatedAt automáticamente
 });
 
 module.exports = mongoose.model('Usuario', UsuarioSchema);

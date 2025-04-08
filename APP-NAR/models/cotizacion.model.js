@@ -8,6 +8,8 @@ const CotizacionSchema = mongoose.Schema({
     precioFinal: { type: Number, required: true },
     fechaCotizacion: { type: Date, default: Date.now },
     estado: {type: String, required: true, default: "pendiente"}
-})
+}, {
+    timestamps: true // Esto agrega createdAt y updatedAt automáticamente
+});
 
 module.exports = mongoose.model('Cotizacion', CotizacionSchema);

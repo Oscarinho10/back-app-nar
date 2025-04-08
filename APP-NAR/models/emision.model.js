@@ -11,6 +11,8 @@ const EmisionSchema = mongoose.Schema({
     fechaVencimiento: { type: Date, required: true },
     montoTotal: { type: Number, required: true },
     estado: { type: String, required: true, default: "activo" }
-})
+}, {
+    timestamps: true // Esto agrega createdAt y updatedAt automáticamente
+});
 
 module.exports = mongoose.model('Emision', EmisionSchema);

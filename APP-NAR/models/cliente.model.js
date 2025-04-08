@@ -9,6 +9,8 @@ const ClienteSchema = mongoose.Schema({
     rfc: { type: String, required: true, unique: true },
     telefono: { type: String, required: true, unique: true },
     edad: { type: Number, required: false } // Campo para la edad (no manual)
+}, {
+    timestamps: true // Esto agrega createdAt y updatedAt automáticamente
 });
 
 module.exports = mongoose.model('Cliente', ClienteSchema);
