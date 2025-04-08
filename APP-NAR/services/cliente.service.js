@@ -26,6 +26,15 @@ class ClienteService {
         return cliente;
     }
 
+    async getClienteByRFC(RFC) {
+        const cliente = await ClienteRepository.getClienteByRFC(RFC);
+        if (!cliente) {
+            throw new Error('Cliente no encontrado');
+        }
+
+        return cliente;
+    }
+
     async getClientesByNombre(nombre) {
         const cliente = await ClienteRepository.getClientesByNombre(nombre);
         if (!cliente) {

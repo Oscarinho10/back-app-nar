@@ -37,6 +37,20 @@ class ClienteController {
         }
     }
 
+    async getClienteByRFC(req, res) {
+        try {
+            //Validar que el Id venga en la petición
+            const clienteRFC = req.params.rfc;
+            if (!clienteRFC || clienteRFC == '' || clienteRFC == null || clienteRFC == undefined) {
+                throw new Error('El Id del cliente es requerido');
+            }
+            const cliente = await ClienteService.getClienteByRFC(clienteRFC);
+            res.json(cliente);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async getClientesByNombre(req, res) {
         try {
             const { nombre } = req.query;
