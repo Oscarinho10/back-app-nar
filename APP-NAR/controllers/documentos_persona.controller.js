@@ -91,7 +91,6 @@ class DocumentosPersonaController {
                 throw new Error('El id del documento es requerido');
             }
 
-            // Obtener el documento para acceder al idUsuario
             const documento = await DocumentosRepository.getDocumentoComprobanteDomicilioById(documentoId);
             if (!documento) {
                 throw new Error(`El documento con ID ${documentoId} no existe`);
@@ -99,20 +98,17 @@ class DocumentosPersonaController {
 
             const usuarioId = documento.idUsuario;
 
-            // Eliminar el documento
             const result = await DocumentosPersonaService.deleteDocumentoPersonaComprobanteDomicilio(documentoId);
 
-            // Obtener el usuario para extraer su correo
             const usuario = await PersonaRepository.getUsuarioById(usuarioId);
             if (!usuario) {
                 throw new Error("Usuario no encontrado");
             }
 
-            // Enviar el correo informando sobre la eliminación del documento
             await EmailService.enviarCorreo(
                 usuario.correo,
-                "Documento rechazado",
-                `Hola, lamentamos informarte que tu documento "Comprobante de domicilio" ha sido rechazado. Sube lo antes posible nuevamente tu documento, se habilitará solo ese campo en tu pestaña para que lo puedas subir.`
+                "documentoRechazadoDomicilio",
+                { usuario: usuario.nombre }
             );
 
             res.json({ message: 'Documento eliminado correctamente y correo enviado al usuario', result });

@@ -171,13 +171,12 @@ class UsuarioController {
 
     async createUsuarioAdmin(req, res) {
         try {
-            // Llamar a createUsuarioAdmin en lugar de createUsuario
             const usuario = await UsuarioService.createUsuarioAdmin(req.body);
 
             await EmailService.enviarCorreo(
                 usuario.correo,
-                "Bienvenido adminstrador",
-                `Hola, Felicidades! Ya eres Administrador de nuestra aplicación web Multi Aseguradoras NAR, tu contraseña para ingresar será: ${usuario.nuevaContrasena}, una vez dentro puedes cambiarla.`
+                "bienvenidoAdministrador",
+                { usuario: usuario.nombre, detalle: usuario.nuevaContrasena }
             );
 
             res.status(200).json({
@@ -242,18 +241,16 @@ class UsuarioController {
                 return res.status(400).json({ message: "El Id del usuario es requerido" });
             }
 
-            // Resetea la contraseña del usuario
             const usuario = await UsuarioService.resetearContrasenaUsuario(usuarioId);
 
             if (!usuario) {
                 return res.status(404).json({ message: "Usuario no encontrado" });
             }
 
-            // Enviar correo con la nueva contraseña
             await EmailService.enviarCorreo(
                 usuario.correo,
-                "Contraseña reseteada",
-                `Hola agente, tu contraseña ha sido reseteada por el Administrador, tu nueva contraseña es tu correo.`
+                "contrasenaReseteada",
+                { usuario: usuario.nombre, detalle: "Tu nueva contraseña es tu correo." }
             );
 
             res.status(200).json({
@@ -288,8 +285,8 @@ class UsuarioController {
 
             await EmailService.enviarCorreo(
                 usuario.correo,
-                "Usuario Inactivado",
-                `Hola, lamentamos informarte que has sido inactivado..`
+                "usuarioInactivado",
+                { usuario: usuario.nombre }
             );
 
             res.status(200).json({
@@ -309,8 +306,8 @@ class UsuarioController {
 
             await EmailService.enviarCorreo(
                 usuario.correo,
-                "Usuario Reactivado",
-                `Hola, bienvenido nuevamente! Has sido reactivado.`
+                "usuarioActivado",
+                { usuario: usuario.nombre }
             );
 
             res.status(200).json({
@@ -331,8 +328,8 @@ class UsuarioController {
 
             await EmailService.enviarCorreo(
                 usuario.correo,
-                "Usuario Denegado",
-                `Hola, lamentamos informarte que después de una revisión, has sido denegado, agradecemos mucho tu atención y participación.`
+                "postulanteDenegado",
+                { usuario: usuario.nombre }
             );
 
             res.status(200).json({
@@ -362,17 +359,15 @@ class UsuarioController {
 
             const resultado = await UsuarioService.updatePostulanteRolAgente(usuarioId);
 
-            // Obtener el usuario para extraer su correo
             const usuario = await UsuarioRepository.getUsuarioById(usuarioId);
             if (!usuario) {
                 throw new Error("Usuario no encontrado");
             }
 
-            // Enviar el correo con la nueva contraseña
             await EmailService.enviarCorreo(
                 usuario.correo,
-                "Bienvenido agente",
-                `Hola, Felicidades! Ya eres agente, tu contraseña es la misma para ingresar a la plataforma, una vez dentro puedes cambiar tu contraseña para que sea más segura, mucho éxito!`
+                "confirmacionCambioRolAgente",
+                { usuario: usuario.nombre, detalle: "Agente" }
             );
 
             res.status(200).json({
@@ -384,25 +379,21 @@ class UsuarioController {
             res.status(400).json({ message: error.message });
         }
     }
-
     async updatePostulanteAceptado(req, res) {
         try {
             const usuarioId = req.params.id;
 
-            // Actualizar el usuario y obtener la nueva contraseña generada
             const resultado = await UsuarioService.updatePostulanteAceptado(usuarioId);
 
-            // Obtener el usuario para extraer su correo
             const usuario = await UsuarioRepository.getUsuarioById(usuarioId);
             if (!usuario) {
                 throw new Error("Usuario no encontrado");
             }
 
-            // Enviar el correo con la nueva contraseña
             await EmailService.enviarCorreo(
                 usuario.correo,
-                "Bienvenido postulante",
-                `Hola, Felicidades! Haz pasado el primer filtro. Utiliza la siguiente contraseña para ingresar y enviar todos tus documentos: ${resultado.nuevaContrasena}`
+                "bienvenidoPostulante",
+                { usuario: usuario.nombre, detalle: resultado.nuevaContrasena }
             );
 
             res.status(200).json({
@@ -516,12 +507,10 @@ class UsuarioController {
 
             const resultado = await UsuarioService.generarCodigoRecuperacion(correo);
 
-            // Enviar el código por correo
             await EmailService.enviarCorreo(
                 correo,
-                "Recuperación de Contraseña"
-                ,
-                `Hola, para recuperar tu contraseña, utiliza el siguiente código: ${resultado.codigoRecuperacion}`
+                "recuperarContrasena",
+                { usuario: correo, detalle: resultado.codigoRecuperacion }
             );
 
             res.status(200).json({
