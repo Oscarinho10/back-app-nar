@@ -1,28 +1,23 @@
-const nodemailer = require("nodemailer");
+const sgMail = require('@sendgrid/mail');
 
 class EmailService {
     constructor() {
-        this.transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: "nar.multiaseguradora@gmail.com",
-                pass: "zvjp rctt easz yiuo",
-            },
-        });
+        // Configura SendGrid con tu clave API
+        sgMail.setApiKey('TU_CLAVE_API_DE_SENDGRID');
     }
 
     // Método para enviar correos en texto plano y HTML
     async enviarCorreo(destinatario, asunto, mensajeTexto, mensajeHTML = null) {
         const opcionesCorreo = {
-            from: `"Multi Aseguradora NAR" <nar.multiaseguradora@gmail.com>`, 
             to: destinatario,
+            from: 'nar.multiaseguradora@gmail.com',
             subject: asunto,
-            text: mensajeTexto,   // Contenido en texto plano
+            text: mensajeTexto,
             ...(mensajeHTML && { html: mensajeHTML })  // Si hay HTML, lo agrega
         };
 
         try {
-            await this.transporter.sendMail(opcionesCorreo);
+            await sgMail.send(opcionesCorreo);
         } catch (error) {
             throw new Error("Error al enviar el correo: " + error.message);
         }

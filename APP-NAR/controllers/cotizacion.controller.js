@@ -46,24 +46,29 @@ class CotizacionController {
             // Obtener detalles adicionales para cada cotización
             const cotizacionesDetalladas = await Promise.all(
                 cotizaciones.map(async (cotizacion) => {
-                    const asegurado = await AseguradoService.getAseguradoById(cotizacion.idAsegurado);
-                    const seguro = await SeguroService.getSeguroById(cotizacion.idSeguro);
-                    const cliente = await ClienteService.getClienteById(cotizacion.idCliente); // Se corrigió esta línea
+                    try {
+                        const asegurado = await AseguradoService.getAseguradoById(cotizacion.idAsegurado);
+                        const seguro = await SeguroService.getSeguroById(cotizacion.idSeguro);
+                        const cliente = await ClienteService.getClienteById(cotizacion.idCliente);
 
-                    if (!asegurado || !seguro || !cliente) {
-                        return null; // Filtrar después si falta información
+                        if (!asegurado || !seguro || !cliente) {
+                            return null;
+                        }
+
+                        return {
+                            idCotizacion: cotizacion.id,
+                            nombreCliente: `${cliente.nombre} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`,
+                            nombreAsegurado: `${asegurado.nombre} ${asegurado.apellidoPaterno} ${asegurado.apellidoMaterno}`,
+                            nombreSeguro: seguro.nombre,
+                            tipoSeguro: seguro.tipo,
+                            cobertura: seguro.cobertura,
+                            precioFinal: cotizacion.precioFinal,
+                            fechaCotizacion: cotizacion.fechaCotizacion,
+                        };
+                    } catch (error) {
+                        console.warn(`Error al procesar cotización ID ${cotizacion.id}:`, error.message);
+                        return null;
                     }
-
-                    return {
-                        idCotizacion: cotizacion.id,
-                        nombreCliente: `${cliente.nombre} ${cliente.apellidoPaterno} ${cliente.apellidoMaterno}`,
-                        nombreAsegurado: `${asegurado.nombre} ${asegurado.apellidoPaterno} ${asegurado.apellidoMaterno}`,
-                        nombreSeguro: seguro.nombre,
-                        tipoSeguro: seguro.tipo,
-                        cobertura: seguro.cobertura,
-                        precioFinal: cotizacion.precioFinal,
-                        fechaCotizacion: cotizacion.fechaCotizacion,
-                    };
                 })
             );
 

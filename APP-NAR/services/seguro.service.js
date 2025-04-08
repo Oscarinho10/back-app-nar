@@ -1,4 +1,5 @@
 const SeguroRepository = require("../repositories/seguro.repository");
+const Seguro = require('../models/seguro.model'); // Ajusta la ruta según tu estructura
 const Validaciones = require("../utils/validation");
 const Utils = require("../utils/utils");
 
@@ -12,12 +13,8 @@ class SeguroService {
     }
 
     async getSeguroById(id) {
-        const seguro = await SeguroRepository.getSeguroById(id);
-        if (!seguro) {
-            throw new Error('Seguro no encontrado');
-        }
-        return seguro;
-    }
+        return await Seguro.findById(id);
+    }    
 
     async getAseguradoraById(id) {
         const aseguradora = await SeguroRepository.getAseguradoraById(id);

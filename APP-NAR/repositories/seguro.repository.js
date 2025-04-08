@@ -20,8 +20,8 @@ class SeguroRepository {
     }
 
     async getSeguroById(id) {
-        return await Seguro.findById(id);
-    }
+        return await Seguro.findById(id); // Devuelve null si no lo encuentra
+    }    
 
     async createSeguro(seguro) {
         return await Seguro.create(seguro);
