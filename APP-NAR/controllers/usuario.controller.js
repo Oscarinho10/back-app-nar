@@ -457,7 +457,8 @@ class UsuarioController {
                 data: {
                     _id: usuario._id,
                     correo: usuario.correo,
-                    rol: usuario.rol, // Incluye explícitamente el rol
+                    rol: usuario.rol,
+                    estado: usuario.estado, // Incluye explícitamente el rol
                     token,
                 },
             });
