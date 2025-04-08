@@ -342,16 +342,17 @@ class UsuarioService {
     }
 
     async updateUsuarioStatusActive(id) {
-        //Validar que la aseguradora exista
+        // Validar que la aseguradora exista
         const usuario = await UsuarioRepository.getUsuarioById(id);
         if (!usuario) {
-            throw new Error('Usuario no encontrado')
+            throw new Error('Usuario no encontrado');
         }
 
         // Incrementar el contador de reactivaciones
         await UsuarioRepository.incrementReactivaciones(id);
 
-        return await UsuarioRepository.updateUsuarioStatusActive(id)
+        // Actualizar estado y reactivaciónSolicitida
+        return await UsuarioRepository.updateUsuarioStatusActive(id);
     }
 
     async updateUsuarioStatusDenegado(id) {
@@ -448,19 +449,19 @@ class UsuarioService {
         if (!correo || !contrasena) {
             throw new Error("Correo y contraseña son obligatorios");
         }
-    
+
         // Buscar usuario por correo
         const usuario = await UsuarioRepository.getUsuarioByCorreo(correo);
         if (!usuario) {
             throw new Error("Correo o contraseña incorrectos");
         }
-    
+
         // Verificar si el usuario está inactivo y no es administrador
-        if (usuario.estado ===  "inactivo" && usuario.rol === "administrador") {
+        if (usuario.estado === "inactivo" && usuario.rol === "administrador") {
             throw new Error("Tu cuenta está inactiva. Contacta al administrador.");
         }
 
-        if (usuario.estado ===  "denegado" && usuario.rol === "postulante") {
+        if (usuario.estado === "denegado" && usuario.rol === "postulante") {
             throw new Error("Tu cuenta está inactiva. Contacta al administrador.");
         }
 
@@ -469,7 +470,7 @@ class UsuarioService {
         if (!esPasswordValido) {
             throw new Error("Correo o contraseña incorrectos");
         }
-    
+
         // Retornar usuario si la autenticación es correcta
         return {
             _id: usuario._id,
@@ -477,7 +478,7 @@ class UsuarioService {
             rol: usuario.rol,
             estado: usuario.estado // Incluye explícitamente el rol
         };
-    }    
+    }
 
     async loginAgente(correo, contrasena) {
         // Validar que los campos no estén vacíos
@@ -574,20 +575,20 @@ class UsuarioService {
         if (!usuario) {
             throw new Error('Usuario no encontrado');
         }
-    
+
         // Verificar que el rol del usuario sea "agente"
         if (usuario.rol !== 'agente') {
             throw new Error('Solo los usuarios con rol de agente pueden acceder a esta información');
         }
-    
+
         // Devolver solo los campos id, emisiones y cotizaciones
         return {
             id: usuario._id,
             emisiones: usuario.emisiones,
             cotizaciones: usuario.cotizaciones
         };
-    }  
-    
+    }
+
 }
 
 module.exports = new UsuarioService();

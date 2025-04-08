@@ -302,7 +302,8 @@ class UsuarioController {
     async updateUsuarioStatusActive(req, res) {
         try {
             const usuarioId = req.params.id;
-            const usuario = await UsuarioService.updateUsuarioStatusActive(usuarioId, req.body);
+
+            const usuario = await UsuarioService.updateUsuarioStatusActive(usuarioId);
 
             await EmailService.enviarCorreo(
                 usuario.correo,

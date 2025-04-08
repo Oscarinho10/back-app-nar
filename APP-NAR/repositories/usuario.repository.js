@@ -117,14 +117,14 @@ class UsuarioRepository {
 
     async updateUsuarioStatusActive(id) {
         return await Usuario.findByIdAndUpdate(
-            id, 
-            { 
-                estado: 'activo', 
-                reactivacionSolicitida: 'inactiva' 
-            }, 
+            id,
+            {
+                estado: 'activo',
+                reactivacionSolicitada: 'inactiva' // Se cambia también aquí
+            },
             { new: true } // Devuelve el documento actualizado
         );
-    }
+    }    
 
     async updateAgenteStatusReactivaciones(id) {
         return await Usuario.findByIdAndUpdate(id, { reactivacionSolicitada: 'activa' }, { new: true });
