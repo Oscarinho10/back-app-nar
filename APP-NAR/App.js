@@ -18,7 +18,7 @@ const caratulaBanco = require('./routes/documentos_persona_caratula_banco.routes
 const documentoAfiliacion = require('./routes/documentos_persona_documento_afiliacion.routes');
 
 const App = express();
-const PORT = 3000;
+const PORT = 3001;
 
 App.use(cors());
 
