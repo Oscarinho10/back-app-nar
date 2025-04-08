@@ -7,6 +7,8 @@ const SeguroSchema = mongoose.Schema({
     cobertura: { type: String, required: true },
     precioBase: { type: Number, required: true },
     estado: { type: String, required: true, default: "activo" }
-})
+}, {
+    timestamps: true // Esto agrega createdAt y updatedAt automáticamente
+});
 
 module.exports = mongoose.model('Seguro', SeguroSchema);

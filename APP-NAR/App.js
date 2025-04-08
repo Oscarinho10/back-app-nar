@@ -10,8 +10,12 @@ const usuariosRoutes = require('./routes/usuario.routes');
 const segurosRoutes = require('./routes/seguro.routes');
 const cotizacionesRoutes = require('./routes/cotizacion.routes');
 const emisionesRoutes = require('./routes/emision.routes');
-const documentosPersonaRoutes = require('./routes/documentos_personas.routes');
+const comprobanteDomicilio = require('./routes/documentos_personas.routes');
 const cuotasMensualesRoutes = require('./routes/cuotaMensual.routes');
+const comprobanteFiscal = require('./routes/documentos_persona_constancia_fiscal.routes');
+const identificacionOficial = require('./routes/documentos_persona_identificacion.routes');
+const caratulaBanco = require('./routes/documentos_persona_caratula_banco.routes');
+const documentoAfiliacion = require('./routes/documentos_persona_documento_afiliacion.routes');
 
 const App = express();
 const PORT = 3000;
@@ -28,7 +32,11 @@ App.use('/nar/usuarios', usuariosRoutes);
 App.use('/nar/seguros', segurosRoutes);
 App.use('/nar/cotizaciones', cotizacionesRoutes);
 App.use('/nar/emisiones', emisionesRoutes);
-App.use('/nar/documentosPersona', documentosPersonaRoutes);
+App.use('/nar/comprobanteDomicilio', comprobanteDomicilio);
+App.use('/nar/constanciaFiscal', comprobanteFiscal);
+App.use('/nar/identificacionOficial', identificacionOficial);
+App.use('/nar/caratulaBanco', caratulaBanco);
+App.use('/nar/documentoAfiliacion', documentoAfiliacion);
 App.use('/nar/cuotas', cuotasMensualesRoutes);
 
 // mongodb+srv://20233tn143:5yZYXxMXa6998s1H@mongazo1.yez4y.mongodb.net/?retryWrites=true&w=majority&appName=Mongazo1'

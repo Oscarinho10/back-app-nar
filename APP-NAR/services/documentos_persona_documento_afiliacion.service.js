@@ -1,4 +1,4 @@
-const DocumentosPersonaRepository = require('../repositories/documentos_persona.repository');
+const DocumentosPersonaRepository = require('../repositories/documentos_persona_documento_afiliacion.repository');
 const PersonaRepository = require('../repositories/usuario.repository');
 
 class DocumentosPersonaService {
@@ -9,7 +9,7 @@ class DocumentosPersonaService {
         }
 
         const documentoPersona = {
-            nombre: "Comprobante de Domicilio",
+            nombre: "Documento de afiliación",
             idUsuario: idUsuario,
             idDocumento: idDocumento,  // Verifica que el nombre del campo coincida con el modelo
         };

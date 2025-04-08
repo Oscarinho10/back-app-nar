@@ -1,5 +1,5 @@
-const DocumentosPersonaService = require('../services/documentos_persona.service');
-const DocumentosRepository = require('../repositories/documentos_persona.repository');
+const DocumentosPersonaService = require('../services/documentos_persona_identificacion.service');
+const DocumentosRepository = require('../repositories/documentos_persona_identificacion.repository');
 const PersonaRepository = require('../repositories/usuario.repository');
 const EmailService = require("../services/email.service");
 const { getGFS } = require('../config/gridfs');
@@ -112,7 +112,7 @@ class DocumentosPersonaController {
             await EmailService.enviarCorreo(
                 usuario.correo,
                 "Documento rechazado",
-                `Hola, lamentamos informarte que tu documento "Comprobante de domicilio" ha sido rechazado. Sube lo antes posible nuevamente tu documento, se habilitará solo ese campo en tu pestaña para que lo puedas subir.`
+                `Hola, lamentamos informarte que tu documento "Identificación oficial" ha sido rechazado. Sube lo antes posible nuevamente tu documento, se habilitará solo ese campo en tu pestaña para que lo puedas subir.`
             );
 
             res.json({ message: 'Documento eliminado correctamente y correo enviado al usuario', result });

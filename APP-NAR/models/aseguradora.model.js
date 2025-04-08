@@ -7,6 +7,8 @@ const AseguradoraSchema = mongoose.Schema({
     correoContacto: {type: String, required: true, unique: true},
     telefonoContacto: {type: String, required: true, unique: true},
     estado: {type: String, required: true, default: "activo"}
-})
+}, {
+    timestamps: true // Esto agrega createdAt y updatedAt automáticamente
+});
 
 module.exports = mongoose.model('Aseguradora', AseguradoraSchema);
