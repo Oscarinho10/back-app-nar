@@ -2,6 +2,7 @@ const EmisionService = require("../services/emision.service");
 const SeguroService = require("../services/seguro.service");
 const AseguradoService = require("../services/asegurado.service");
 const ClienteService = require("../services/cliente.service");
+const cotizacionService = require("../services/cotizacion.service");
 
 class EmisionController {
     async getAllEmisiones(req, res) {
@@ -31,9 +32,10 @@ class EmisionController {
             // Obtener los datos del asegurado y el seguro relacionados con la emisión
             const asegurado = await AseguradoService.getAseguradoById(emision.idAsegurado);
             const seguro = await SeguroService.getSeguroById(emision.idSeguro);
+            const cotizacion = await cotizacionService.getCotizacionById(emision.idCotizacion);
     
             // Si no se encuentran el asegurado o el seguro, devolver un error
-            if (!asegurado || !seguro) {
+            if (!asegurado || !seguro || !cotizacion) {
                 return res.status(404).json({ success: false, message: "Datos del asegurado o seguro no encontrados" });
             }
     
@@ -47,7 +49,7 @@ class EmisionController {
                 tipoSeguro: seguro.tipo,
                 cobertura: seguro.cobertura,
                 vigencia: `${emision.fechaInicio.toISOString().split('T')[0]} - ${emision.fechaVencimiento.toISOString().split('T')[0]}`,
-                montoTotal: emision.montoTotal,
+                montoTotal: cotizacion.precioFinal,
             };
     
             return res.status(200).json({ 
@@ -119,6 +121,7 @@ class EmisionController {
                 emisiones.map(async (emision, index) => {
                     const seguro = await SeguroService.getSeguroById(emision.idSeguro);
                     const cliente = await ClienteService.getClienteById(emision.idCliente);
+                    const cotizacion = await cotizacionService.getCotizacionById(emision.idCotizacion);
                     return {
                         idPoliza: emision.id,
                         cliente: cliente
@@ -127,7 +130,7 @@ class EmisionController {
                         numeroPoliza: index + 1, // Enumerar las pólizas
                         nombreSeguro: seguro?.nombre || "Seguro no encontrado",
                         vigencia: `${emision.fechaInicio.toISOString().split('T')[0]} - ${emision.fechaVencimiento.toISOString().split('T')[0]}`,
-                        montoTotal: emision.montoTotal
+                        montoTotal: cotizacion.precioFinal
                     };
                 })
             );
