@@ -1,9 +1,9 @@
 const sgMail = require('@sendgrid/mail');
+require('dotenv').config();
 
 class EmailService {
     constructor() {
-        // Configura SendGrid con tu clave API
-        sgMail.setApiKey('TU_CLAVE_API_DE_SENDGRID');
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
     }
 
     // Método para enviar correos en texto plano y HTML
