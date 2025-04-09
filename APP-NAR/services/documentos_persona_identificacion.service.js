@@ -8,6 +8,16 @@ class DocumentosPersonaService {
             throw new Error('Faltan parámetros necesarios para crear el documento');
         }
 
+        // Verificar si ya existe un documento "Comprobante de Domicilio" para el usuario
+        const documentoExistente = await DocumentosPersonaRepository.findOne({
+            idUsuario: idUsuario,
+            nombre: "Identificación oficial"
+        });
+
+        if (documentoExistente) {
+            throw new Error('El usuario ya tiene una Identificación oficial registrada');
+        }
+
         const documentoPersona = {
             nombre: "Identificación oficial",
             idUsuario: idUsuario,

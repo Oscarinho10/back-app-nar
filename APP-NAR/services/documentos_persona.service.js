@@ -7,15 +7,26 @@ class DocumentosPersonaService {
         if (!idUsuario || !idDocumento) {
             throw new Error('Faltan parámetros necesarios para crear el documento');
         }
-
+    
+        // Verificar si ya existe un documento "Comprobante de Domicilio" para el usuario
+        const documentoExistente = await DocumentosPersonaRepository.findOne({
+            idUsuario: idUsuario,
+            nombre: "Comprobante de Domicilio"
+        });
+    
+        if (documentoExistente) {
+            throw new Error('El usuario ya tiene un Comprobante de Domicilio registrado');
+        }
+    
         const documentoPersona = {
             nombre: "Comprobante de Domicilio",
             idUsuario: idUsuario,
-            idDocumento: idDocumento,  // Verifica que el nombre del campo coincida con el modelo
+            idDocumento: idDocumento,
         };
-
+    
         return await DocumentosPersonaRepository.createDocumentoPersonaComprobanteDomicilio(documentoPersona);
     }
+    
 
     // Actualizar el estado del documento
     // documentos_persona.service.js
