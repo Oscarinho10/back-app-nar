@@ -5,17 +5,16 @@ class DocumentosPersonaService {
     // Crear un documento para un usuario
     async createDocumentoPersonaComprobanteDomicilio(idUsuario, idDocumento) {
         if (!idUsuario || !idDocumento) {
-            throw new Error('Faltan parámetros necesarios para crear el documento');
+            return { success: false, message: 'Faltan parámetros necesarios para crear el documento' };
         }
 
-        // Verificar si ya existe un documento "Comprobante de Domicilio" para el usuario
         const documentoExistente = await DocumentosPersonaRepository.getDocumentoComprobanteDomicilioByNombreYUsuario(
             "Constancia de situación fiscal",
             idUsuario
         );
 
         if (documentoExistente) {
-            throw new Error('El usuario ya tiene un Constancia de situación fiscal registrado');
+            return { success: false, message: 'El usuario ya tiene una Constancia de situación fiscal registrada' };
         }
 
         const documentoPersona = {
@@ -24,7 +23,8 @@ class DocumentosPersonaService {
             idDocumento: idDocumento,  // Verifica que el nombre del campo coincida con el modelo
         };
 
-        return await DocumentosPersonaRepository.createDocumentoPersonaComprobanteDomicilio(documentoPersona);
+        const resultado = await DocumentosPersonaRepository.createDocumentoPersonaComprobanteDomicilio(documentoPersona);
+        return { success: true, data: resultado };
     }
 
     // Actualizar el estado del documento
