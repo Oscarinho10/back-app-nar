@@ -27,6 +27,19 @@ class DocumentosPersonaService {
         return await DocumentosPersonaRepository.createDocumentoPersonaComprobanteDomicilio(documentoPersona);
     }
 
+    async getEstadoDocumento(idDocumento) {
+        if (!idDocumento) {
+            throw new Error('El id del documento es requerido');
+        }
+
+        const documento = await DocumentosPersonaRepository.getDocumentoComprobanteDomicilioById(idDocumento);
+        if (!documento) {
+            throw new Error(`El documento con ID ${idDocumento} no existe`);
+        }
+
+        return await DocumentosPersonaRepository.getEstadoDocumento(idDocumento);
+    }
+    
     // Actualizar el estado del documento
     // documentos_persona.service.js
     async deleteDocumentoPersonaComprobanteDomicilio(documentoId) {

@@ -16,6 +16,9 @@ router.delete('/rechazarDocumento/:id', DocumentosPersonaController.deleteDocume
 
 router.put('/aceptarDocumento/:id', DocumentosPersonaController.updateStatusAceptadoDocumentoPersonaDomicilio);
 
+router.get('/estado/:id', DocumentosPersonaController.getEstadoDocumento);
+
+
 // router.put('/updateDocumento/:id', DocumentosPersonaController.updateDocumentoPersonaComprobanteDomicilio);
 
 module.exports = router;

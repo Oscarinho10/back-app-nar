@@ -12,10 +12,10 @@ class DocumentosPersonaController {
         if (!req.files || Object.keys(req.files).length === 0) {
             return res.status(400).send('No se subieron archivos.');
         }
-    
+
         const files = req.files.archivo;
         const filesArray = Array.isArray(files) ? files : [files];
-    
+
         const uploadFile = (file) => {
             return new Promise((resolve, reject) => {
                 const uploadStream = getGFS().openUploadStream(
@@ -23,11 +23,11 @@ class DocumentosPersonaController {
                     chunkSizeBytes: 1048576,
                     metadata: { contentType: file.mimetype }
                 });
-    
+
                 const buffer = file.data;
                 uploadStream.write(buffer);
                 uploadStream.end();
-    
+
                 uploadStream.on('finish', () => {
                     resolve({
                         message: 'Archivo subido correctamente',
@@ -35,25 +35,25 @@ class DocumentosPersonaController {
                         fileName: uploadStream.filename
                     });
                 });
-    
+
                 uploadStream.on('error', (err) => {
                     reject(err);
                 });
             });
         };
-    
+
         try {
             const idFiles = await Promise.all(filesArray.map(file => uploadFile(file)));
             const resp = [];
             for (const fileX of idFiles) {
                 const idDocumentoGuardado = fileX.fileId;
                 const nombreDocumentoGuardado = fileX.fileName;
-    
+
                 const idUsuario = req.body.idUsuario;
                 if (!idUsuario) {
                     throw new Error('El id del usuario es requerido');
                 }
-    
+
                 try {
                     const documentoPersonaCreado = await DocumentosPersonaService.createDocumentoPersonaComprobanteDomicilio(idUsuario, idDocumentoGuardado, nombreDocumentoGuardado);
                     resp.push(documentoPersonaCreado);
@@ -63,11 +63,25 @@ class DocumentosPersonaController {
                     resp.push({ error: error.message });
                 }
             }
-    
+
             res.json(resp);
         } catch (error) {
             console.error('Error al subir los archivos:', error.message);
             res.status(500).send('Ocurrió un error al procesar los archivos.');
+        }
+    }
+
+    async getEstadoDocumento(req, res) {
+        try {
+            const documentoId = req.params.id;
+            if (!documentoId || documentoId == '' || documentoId == null || documentoId == undefined) {
+                throw new Error('El id del documento es requerido');
+            }
+
+            const estado = await DocumentosPersonaService.getEstadoDocumento(documentoId);
+            res.json({ estado });
+        } catch (error) {
+            res.status(400).json({ message: error.message });
         }
     }
 

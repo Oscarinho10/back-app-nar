@@ -19,6 +19,18 @@ class DocumentoPersonaComprobanteDomicilioRepository {
         }
     }
 
+    async getEstadoDocumento(idDocumento) {
+        try {
+            const documento = await DocumentosPersona.findOne({ idDocumento: idDocumento });
+            if (!documento) {
+                throw new Error(`No se encontró el documento con ID ${idDocumento}`);
+            }
+            return documento.estado;
+        } catch (error) {
+            throw new Error('Error al obtener el estado del documento: ' + error.message);
+        }
+    }
+
     async findOne(query) {
         try {
             return await DocumentosPersona.findOne(query);

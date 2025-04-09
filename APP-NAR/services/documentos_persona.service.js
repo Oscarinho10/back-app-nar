@@ -42,6 +42,20 @@ class DocumentosPersonaService {
         return await DocumentosPersonaRepository.deleteDocumentoPersonaComprobanteDomicilio(documentoId);
     }
 
+    async getEstadoDocumento(idDocumento) {
+        if (!idDocumento) {
+            throw new Error('El id del documento es requerido');
+        }
+
+        const documento = await DocumentosPersonaRepository.getDocumentoComprobanteDomicilioById(idDocumento);
+        if (!documento) {
+            throw new Error(`El documento con ID ${idDocumento} no existe`);
+        }
+
+        return await DocumentosPersonaRepository.getEstadoDocumento(idDocumento);
+    }
+
+
     async updateStatusAceptadoDocumentoPersonaDomicilio(idDocumento) {
         if (!idDocumento) {
             throw new Error('El id del documento es requerido');
