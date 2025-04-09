@@ -9,13 +9,13 @@ class DocumentosPersonaService {
         }
 
         // Verificar si ya existe un documento "Comprobante de Domicilio" para el usuario
-        const documentoExistente = await DocumentosPersonaRepository.findOne({
-            idUsuario: idUsuario,
-            nombre: "Constancia de situación fiscal"
-        });
+        const documentoExistente = await DocumentosPersonaRepository.getDocumentoComprobanteDomicilioByNombreYUsuario(
+            "Constancia de situación fiscal",
+            idUsuario
+        );
 
         if (documentoExistente) {
-            throw new Error('El usuario ya tiene una Constancia de situación fiscal registrada');
+            throw new Error('El usuario ya tiene un Constancia de situación fiscal registrado');
         }
 
         const documentoPersona = {

@@ -9,10 +9,10 @@ class DocumentosPersonaService {
         }
 
         // Verificar si ya existe un documento "Comprobante de Domicilio" para el usuario
-        const documentoExistente = await DocumentosPersonaRepository.findOne({
-            idUsuario: idUsuario,
-            nombre: "Documento de afiliación"
-        });
+        const documentoExistente = await DocumentosPersonaRepository.getDocumentoComprobanteDomicilioByNombreYUsuario(
+            "Documento de afiliación",
+            idUsuario
+        );
 
         if (documentoExistente) {
             throw new Error('El usuario ya tiene un Documento de afiliación registrado');
