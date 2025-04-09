@@ -19,15 +19,6 @@ class DocumentoPersonaComprobanteDomicilioRepository {
         }
     }
 
-    // Obtener un documento por su ID
-    async getDocumentoComprobanteDomicilioByNombreYUsuario(nombre, idUsuario) {
-        try {
-            return await DocumentosPersona.findOne({ nombre, idUsuario });
-        } catch (error) {
-            throw new Error('Error al obtener el documento por nombre e idUsuario: ' + error.message);
-        }
-    }
-
     // Actualizar el estado de un documento por su ID
     async deleteDocumentoPersonaComprobanteDomicilio(idDocumento) {
         try {

@@ -8,13 +8,14 @@ class DocumentosPersonaService {
             throw new Error('Faltan parámetros necesarios para crear el documento');
         }
 
+        // Verificar si ya existe un documento "Comprobante de Domicilio" para el usuario
         const documentoExistente = await DocumentosPersonaRepository.findOne({
             idUsuario: idUsuario,
             nombre: "Carátula de banco"
         });
 
         if (documentoExistente) {
-            throw new Error('El usuario ya tiene un Carátula de banco registrado');
+            throw new Error('El usuario ya tiene una Carátula de banco registrada');
         }
 
         const documentoPersona = {
@@ -24,7 +25,6 @@ class DocumentosPersonaService {
         };
 
         return await DocumentosPersonaRepository.createDocumentoPersonaComprobanteDomicilio(documentoPersona);
-
     }
 
     // Actualizar el estado del documento

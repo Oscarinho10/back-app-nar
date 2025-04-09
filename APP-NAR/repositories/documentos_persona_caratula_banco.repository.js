@@ -1,4 +1,4 @@
-const DocumentosPersona = require('../models/documentos_persona_caratula_banco.model');
+const DocumentosPersona = require('../models/documentos_persona.model');
 
 class DocumentoPersonaComprobanteDomicilioRepository {
     // Crear un nuevo documento para una persona
@@ -16,15 +16,6 @@ class DocumentoPersonaComprobanteDomicilioRepository {
             return await DocumentosPersona.findOne({ idDocumento: id }); // Usamos 'idDocumento' en lugar de 'documentoId'
         } catch (error) {
             throw new Error('Error al obtener el documento por ID: ' + error.message);
-        }
-    }
-
-    // Obtener un documento por su ID
-    async getDocumentoComprobanteDomicilioByNombreYUsuario(nombre, idUsuario) {
-        try {
-            return await DocumentosPersona.findOne({ nombre, idUsuario });
-        } catch (error) {
-            throw new Error('Error al obtener el documento por nombre e idUsuario: ' + error.message);
         }
     }
 
