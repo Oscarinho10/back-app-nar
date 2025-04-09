@@ -5,16 +5,16 @@ class DocumentosPersonaService {
     // Crear un documento para un usuario
     async createDocumentoPersonaComprobanteDomicilio(idUsuario, idDocumento) {
         if (!idUsuario || !idDocumento) {
-            return { success: false, message: 'Faltan parámetros necesarios para crear el documento' };
+            throw new Error('Faltan parámetros necesarios para crear el documento');
         }
 
-        const documentoExistente = await DocumentosPersonaRepository.getDocumentoComprobanteDomicilioByNombreYUsuario(
-            "Documento de afiliación",
-            idUsuario
-        );
+        const documentoExistente = await DocumentosPersonaRepository.findOne({
+            idUsuario: idUsuario,
+            nombre: "Documento de afiliación"
+        });
 
         if (documentoExistente) {
-            return { success: false, message: 'El usuario ya tiene un Documento de afiliación registrado' };
+            throw new Error('El usuario ya tiene un Documento de afiliación registrado');
         }
 
         const documentoPersona = {
@@ -23,8 +23,7 @@ class DocumentosPersonaService {
             idDocumento: idDocumento,  // Verifica que el nombre del campo coincida con el modelo
         };
 
-        const resultado = await DocumentosPersonaRepository.createDocumentoPersonaComprobanteDomicilio(documentoPersona);
-        return { success: true, data: resultado };
+        return await DocumentosPersonaRepository.createDocumentoPersonaComprobanteDomicilio(documentoPersona);
     }
 
     // Actualizar el estado del documento

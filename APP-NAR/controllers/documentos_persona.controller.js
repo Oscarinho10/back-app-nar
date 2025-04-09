@@ -8,51 +8,62 @@ const mongoose = require('mongoose');
 class DocumentosPersonaController {
 
     async createDocumentoPersonaComprobanteDomicilio(req, res) {
-        try {
-            console.log(req.body);
-
-            // Verificar que se haya enviado el archivo
-            if (!req.files || Object.keys(req.files).length === 0) {
-                return res.status(400).send('No se subieron archivos.');
-            }
-
-            const files = req.files.archivo;
-            const filesArray = Array.isArray(files) ? files : [files];
-
-            // Validación del idUsuario antes de proceder
-            const idUsuario = req.body.idUsuario;
-            if (!idUsuario || idUsuario === '' || idUsuario == null) {
-                return res.status(400).json({ message: 'El id del usuario es requerido' });
-            }
-
-            // Subir archivos y obtener los ids
-            const idFiles = await Promise.all(filesArray.map(file => uploadFile(file)));
-            const resp = [];
-
-            // Procesar cada archivo subido
-            for (const fileX of idFiles) {
-                const idDocumentoGuardado = fileX.fileId;
-                const nombreDocumentoGuardado = fileX.fileName;
-
-                // Llamar al servicio para crear el documento
-                const result = await DocumentosPersonaService.createDocumentoPersonaComprobanteDomicilio(idUsuario, idDocumentoGuardado);
-
-                if (!result.success) {
-                    return res.status(400).json({ message: result.message });
-                }
-
-                resp.push(result.data);
-            }
-
-            // Responder con los documentos creados
-            res.json(resp);
-
-        } catch (error) {
-            console.error('Error al crear el documento:', error);
-            res.status(500).json({ message: 'Hubo un error en el servidor.' });
+        console.log(req.body);
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).send('No se subieron archivos.');
         }
-    }
 
+        const files = req.files.archivo;
+        // Si es un solo archivo, lo convertimos en un array para manejarlo de la misma forma
+        const filesArray = Array.isArray(files) ? files : [files];
+
+        // Función que sube un archivo y devuelve su ID
+        const uploadFile = (file) => {
+            return new Promise((resolve, reject) => {
+                const uploadStream = getGFS().openUploadStream(
+                    file.name, {
+                    chunkSizeBytes: 1048576,
+                    //Para guardar el tipo de archivo
+                    metadata: { contentType: file.mimetype }
+                });
+
+                const buffer = file.data;
+                uploadStream.write(buffer);
+                uploadStream.end();
+
+                // Esperamos a que el archivo termine de subirse
+                uploadStream.on('finish', () => {
+                    resolve({
+                        message: 'Archivo subido correctamente',
+                        fileId: uploadStream.id,
+                        fileName: uploadStream.filename
+                    });
+                });
+
+                uploadStream.on('error', (err) => {
+                    reject(err);
+                });
+            });
+        };
+
+        // Usamos `Promise.all()` para esperar la subida de todos los archivos
+        const idFiles = await Promise.all(filesArray.map(file => uploadFile(file)));
+        const resp = [];
+        for (const fileX of idFiles) {
+            const idDocumentoGuardado = fileX.fileId;
+            const nombreDocumentoGuardado = fileX.fileName;
+
+            const idUsuario = req.body.idUsuario;
+            if (!idUsuario || idUsuario == '' || idUsuario == null || idUsuario == undefined) {
+                throw new Error('El id del usuario es requerido');
+            }
+
+            const documentoPersonaCreado = await DocumentosPersonaService.createDocumentoPersonaComprobanteDomicilio(idUsuario, idDocumentoGuardado, nombreDocumentoGuardado);
+            resp.push(documentoPersonaCreado);
+        }
+
+        res.json(resp);
+    }
 
     async downloadFile(req, res) {
         try {

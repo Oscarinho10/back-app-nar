@@ -5,16 +5,16 @@ class DocumentosPersonaService {
     // Crear un documento para un usuario
     async createDocumentoPersonaComprobanteDomicilio(idUsuario, idDocumento) {
         if (!idUsuario || !idDocumento) {
-            return { success: false, message: 'Faltan parámetros necesarios para crear el documento' };
+            throw new Error('Faltan parámetros necesarios para crear el documento');
         }
 
-        const documentoExistente = await DocumentosPersonaRepository.getDocumentoComprobanteDomicilioByNombreYUsuario(
-            "Comprobante de Domicilio",
-            idUsuario
-        );
-
+        const documentoExistente = await DocumentosPersonaRepository.findOne({
+            idUsuario: idUsuario,
+            nombre: "Comprobante de Domicilio"
+        });
+    
         if (documentoExistente) {
-            return { success: false, message: 'El usuario ya tiene un Comprobante de Domicilio registrado' };
+            throw new Error('El usuario ya tiene un Comprobante de Domicilio registrado');
         }
 
         const documentoPersona = {
@@ -23,8 +23,7 @@ class DocumentosPersonaService {
             idDocumento: idDocumento,
         };
 
-        const resultado = await DocumentosPersonaRepository.createDocumentoPersonaComprobanteDomicilio(documentoPersona);
-        return { success: true, data: resultado };
+        return await DocumentosPersonaRepository.createDocumentoPersonaComprobanteDomicilio(documentoPersona);
     }
 
     // Actualizar el estado del documento
