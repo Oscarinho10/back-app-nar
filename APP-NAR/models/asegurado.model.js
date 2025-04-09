@@ -5,8 +5,8 @@ const AseguradoSchema = mongoose.Schema({
     apellidoPaterno: { type: String, required: true },
     apellidoMaterno: { type: String, required: true },
     fechaNacimiento: { type: Date, required: true },
-    correo: { type: String, required: true, unique: true },
-    rfc: { type: String, required: true, unique: true },
+    correo: { type: String, unique: true },
+    rfc: { type: String, unique: true },
     telefono: { type: String, required: true, unique: true },
     idCliente: { type: mongoose.Schema.Types.ObjectId, ref: 'Cliente', required: true },
     edad: { type: Number, required: false } // Campo para la edad (no manual)

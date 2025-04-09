@@ -27,8 +27,6 @@ class DocumentosPersonaService {
         return { success: true, data: resultado };
     }
 
-
-
     // Actualizar el estado del documento
     // documentos_persona.service.js
     async deleteDocumentoPersonaComprobanteDomicilio(documentoId) {

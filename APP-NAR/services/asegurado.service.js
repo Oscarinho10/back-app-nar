@@ -27,7 +27,7 @@ class AseguradoService {
 
     async createAsegurado(asegurado) {
         //Validar que todos los campos obligatorios vengan
-        if (!asegurado.nombre || !asegurado.apellidoPaterno || !asegurado.apellidoMaterno || !asegurado.fechaNacimiento || !asegurado.correo || !asegurado.rfc || !asegurado.telefono || !asegurado.idCliente) {
+        if (!asegurado.nombre || !asegurado.apellidoPaterno || !asegurado.apellidoMaterno || !asegurado.fechaNacimiento || !asegurado.telefono || !asegurado.idCliente) {
             throw new Error('Todos los campos son requeridos');
         }
 

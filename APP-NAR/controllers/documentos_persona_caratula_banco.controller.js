@@ -8,55 +8,34 @@ const mongoose = require('mongoose');
 class DocumentosPersonaController {
 
     async createDocumentoPersonaComprobanteDomicilio(req, res) {
-        console.log(req.body);
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).send('No se subieron archivos.');
-        }
-
-        const files = req.files.archivo;
-        const filesArray = Array.isArray(files) ? files : [files];
-
-        const uploadFile = (file) => {
-            return new Promise((resolve, reject) => {
-                const uploadStream = getGFS().openUploadStream(file.name, {
-                    chunkSizeBytes: 1048576,
-                    metadata: { contentType: file.mimetype }
-                });
-
-                const buffer = file.data;
-                uploadStream.write(buffer);
-                uploadStream.end();
-
-                uploadStream.on('finish', () => {
-                    resolve({
-                        message: 'Archivo subido correctamente',
-                        fileId: uploadStream.id,
-                        fileName: uploadStream.filename
-                    });
-                });
-
-                uploadStream.on('error', (err) => {
-                    reject(err);
-                });
-            });
-        };
-
         try {
+            console.log(req.body);
+
+            // Verificar que se haya enviado el archivo
+            if (!req.files || Object.keys(req.files).length === 0) {
+                return res.status(400).send('No se subieron archivos.');
+            }
+
+            const files = req.files.archivo;
+            const filesArray = Array.isArray(files) ? files : [files];
+
+            // Validación del idUsuario antes de proceder
+            const idUsuario = req.body.idUsuario;
+            if (!idUsuario || idUsuario === '' || idUsuario == null) {
+                return res.status(400).json({ message: 'El id del usuario es requerido' });
+            }
+
+            // Subir archivos y obtener los ids
             const idFiles = await Promise.all(filesArray.map(file => uploadFile(file)));
             const resp = [];
 
+            // Procesar cada archivo subido
             for (const fileX of idFiles) {
                 const idDocumentoGuardado = fileX.fileId;
-                const idUsuario = req.body.idUsuario;
+                const nombreDocumentoGuardado = fileX.fileName;
 
-                if (!idUsuario || idUsuario === '' || idUsuario === null || idUsuario === undefined) {
-                    return res.status(400).json({ message: 'El id del usuario es requerido' });
-                }
-
-                const result = await DocumentosPersonaService.createDocumentoPersonaComprobanteDomicilio(
-                    idUsuario,
-                    idDocumentoGuardado
-                );
+                // Llamar al servicio para crear el documento
+                const result = await DocumentosPersonaService.createDocumentoPersonaComprobanteDomicilio(idUsuario, idDocumentoGuardado);
 
                 if (!result.success) {
                     return res.status(400).json({ message: result.message });
@@ -65,12 +44,15 @@ class DocumentosPersonaController {
                 resp.push(result.data);
             }
 
+            // Responder con los documentos creados
             res.json(resp);
+
         } catch (error) {
-            console.error('Error en createDocumentoPersonaComprobanteDomicilio:', error);
-            res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+            console.error('Error al crear el documento:', error);
+            res.status(500).json({ message: 'Hubo un error en el servidor.' });
         }
     }
+
 
     async downloadFile(req, res) {
         try {

@@ -22,7 +22,10 @@ class DocumentoPersonaComprobanteDomicilioRepository {
     // Obtener un documento por su ID
     async getDocumentoComprobanteDomicilioByNombreYUsuario(nombre, idUsuario) {
         try {
-            return await DocumentosPersona.findOne({ nombre, idUsuario });
+            return await DocumentosPersona.findOne({
+                nombre,
+                idUsuario: Types.ObjectId(idUsuario)  // Asegurando la conversión a ObjectId
+            });
         } catch (error) {
             throw new Error('Error al obtener el documento por nombre e idUsuario: ' + error.message);
         }
