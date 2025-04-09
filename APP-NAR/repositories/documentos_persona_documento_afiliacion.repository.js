@@ -19,6 +19,14 @@ class DocumentoPersonaComprobanteDomicilioRepository {
         }
     }
 
+    async findOne(query) {
+        try {
+            return await DocumentosPersona.findOne(query);
+        } catch (error) {
+            throw new Error('Error al buscar el documento: ' + error.message);
+        }
+    }
+
     // Actualizar el estado de un documento por su ID
     async deleteDocumentoPersonaComprobanteDomicilio(idDocumento) {
         try {
