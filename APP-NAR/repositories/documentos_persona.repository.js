@@ -56,7 +56,10 @@ class DocumentoPersonaComprobanteDomicilioRepository {
     // Obtener los documentos de una persona por su ID
     async getDocumentoComprobanteDomicilioByPersonaId(idUsuario) {
         try {
-            return await DocumentosPersona.find({ idUsuario: idUsuario });
+            return await DocumentosPersona.find({ 
+                idUsuario: idUsuario,
+                nombre: "Comprobante de Domicilio"
+            });
         } catch (error) {
             throw new Error('Error al obtener documentos por ID de usuario: ' + error.message);
         }
