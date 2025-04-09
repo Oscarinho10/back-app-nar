@@ -111,6 +111,10 @@ class UsuarioRepository {
         return await Usuario.findByIdAndUpdate(id, { estado: 'inactivo' }, { new: true });
     }
 
+    async updateUsuarioStatusInactiveRolAgente(id) {
+        return await Usuario.findByIdAndUpdate(id, { estado: 'inactivo' }, { new: true });
+    }
+
     async updateUsuarioStatusDenegado(id) {
         return await Usuario.findByIdAndUpdate(id, { estado: 'denegado' }, { new: true });
     }
@@ -124,7 +128,7 @@ class UsuarioRepository {
             },
             { new: true } // Devuelve el documento actualizado
         );
-    }    
+    }
 
     async updateAgenteStatusReactivaciones(id) {
         return await Usuario.findByIdAndUpdate(id, { reactivacionSolicitada: 'activa' }, { new: true });
@@ -193,7 +197,7 @@ class UsuarioRepository {
     async countUsuariosByRol(rol) {
         return await Usuario.countDocuments({ rol: rol });
     }
-   
+
 }
 
 module.exports = new UsuarioRepository();

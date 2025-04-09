@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const UsuarioRepository = require("../repositories/usuario.repository");
+const CuotaMensualRepository = require("../repositories/cuotaMensual.repository");
 const Validaciones = require("../utils/validation");
 const Utils = require("../utils/utils");
 
@@ -339,6 +340,32 @@ class UsuarioService {
         }
         return await UsuarioRepository.updateUsuarioStatusInactive(id)
 
+    }
+
+    async updateUsuarioStatusInactiveRolAgente(id) {
+        // Validar que el usuario exista
+        const usuario = await UsuarioRepository.getUsuarioById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        // Validar que el usuario tenga el rol de "agente"
+        if (usuario.rol !== 'agente') {
+            throw new Error('El usuario no tiene el rol de agente');
+        }
+
+        // Obtener la cuota mensual
+        const cuotaMensual = await CuotaMensualRepository.getCuotaMensual();
+        if (!cuotaMensual) {
+            throw new Error('Cuota mensual no encontrada');
+        }
+
+        // Verificar si el usuario cumple con la cuota mensual
+        if (usuario.emisiones < cuotaMensual.cuotaMensual) {
+            return await UsuarioRepository.updateUsuarioStatusInactiveRolAgente(id);
+        }
+
+        return usuario;
     }
 
     async updateUsuarioStatusActive(id) {

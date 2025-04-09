@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const cors = require('cors'); // Importar el paquete cors
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
+const cron = require('node-cron');
+const UsuarioService = require('./services/usuario.service');
+const UsuarioRepository = require('./repositories/usuario.repository');
 const aseguradorasRoutes = require('./routes/aseguradora.routes');
 const clientesRoutes = require('./routes/cliente.routes');
 const aseguradosRoutes = require('./routes/asegurado.routes');
@@ -38,6 +41,16 @@ App.use('/nar/identificacionOficial', identificacionOficial);
 App.use('/nar/caratulaBanco', caratulaBanco);
 App.use('/nar/documentoAfiliacion', documentoAfiliacion);
 App.use('/nar/cuotas', cuotasMensualesRoutes);
+
+// Programar la tarea cron
+cron.schedule('0 0 1 * *', async () => {
+    const usuarios = await UsuarioRepository.getAllUsuarios();
+    for (const usuario of usuarios) {
+        if (usuario.rol === 'agente') {
+            await UsuarioService.updateUsuarioStatusInactiveRolAgente(usuario._id);
+        }
+    }
+});
 
 // mongodb+srv://20233tn143:5yZYXxMXa6998s1H@mongazo1.yez4y.mongodb.net/?retryWrites=true&w=majority&appName=Mongazo1'
 mongoose.connect('mongodb+srv://20233tn143:5yZYXxMXa6998s1H@mongazo1.yez4y.mongodb.net/app-nar-db?retryWrites=true&w=majority&appName=Mongazo1')

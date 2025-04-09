@@ -299,6 +299,35 @@ class UsuarioController {
         }
     }
 
+    async updateUsuarioStatusInactiveRolAgente(req, res) {
+        try {
+            const usuarioId = req.params.id;
+            const usuario = await UsuarioService.updateUsuarioStatusInactiveRolAgente(usuarioId);
+
+            if (usuario.estado === 'inactivo') {
+                await EmailService.enviarCorreo(
+                    usuario.correo,
+                    "usuarioInactivadoPorCuota",
+                    { usuario: usuario.nombre }
+                );
+
+                res.status(200).json({
+                    success: true,
+                    message: "Usuario inactivado por no cumplir con la cuota mensual y enviado a su correo el mensaje.",
+                    data: usuario,
+                });
+            } else {
+                res.status(200).json({
+                    success: true,
+                    message: "Usuario cumple con la cuota mensual.",
+                    data: usuario,
+                });
+            }
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+        }
+    }
+
     async updateUsuarioStatusActive(req, res) {
         try {
             const usuarioId = req.params.id;

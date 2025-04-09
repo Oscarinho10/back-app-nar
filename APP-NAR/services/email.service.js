@@ -76,6 +76,11 @@ const plantillas = {
         mensajeTexto: `Hola ${usuario}, tu póliza ha sido emitida. Detalles: ${detallesPoliza}`,
         mensajeHTML: `<p>Hola ${usuario}, tu póliza ha sido emitida. Detalles: <strong>${detallesPoliza}</strong></p>`
     }),
+    usuarioInactivadoPorCuota: (usuario) => ({
+        asunto: "Usuario Inactivado",
+        mensajeTexto: `Hola ${usuario}, lamentamos informarte que has sido inactivado debido a que no cumpliste con la cuota mensual, te sugerimos entrar a nuestra página e iniciar sesión con tu cuenta para solicitar tu reactivación.`,
+        mensajeHTML: `<p>Hola ${usuario}, lamentamos informarte que has sido inactivado debido a que no cumpliste con la cuota mensual, te sugerimos entrar a nuestra página e iniciar sesión con tu cuenta para solicitar tu reactivación.</p>`
+    })
 };
 
 class EmailService {

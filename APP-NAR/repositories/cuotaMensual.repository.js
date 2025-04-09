@@ -18,6 +18,15 @@ class CuotaMensualRepository {
     async updateCuota(id, cuota) {
         return await CuotaMensual.findByIdAndUpdate(id, cuota, { new: true });
     }
+
+    async getCuotaMensual() {
+        const cuota = await CuotaMensual.findOne().sort({ createdAt: -1 });
+        if (!cuota) {
+            throw new Error('Cuota mensual no encontrada');
+        }
+        return cuota;
+    }
+    
 }
 
 module.exports = new CuotaMensualRepository();
