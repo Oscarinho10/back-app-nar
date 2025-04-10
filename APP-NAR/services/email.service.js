@@ -19,8 +19,8 @@ const plantillas = {
     }),
     confirmacionCambioRolAgente: (usuario, nuevoRol) => ({
         asunto: "Agente Aceptado",
-        mensajeTexto: `Hola ${usuario}, tu rol ha sido cambiado a ${nuevoRol}.`,
-        mensajeHTML: `<p>Hola ${usuario}, tu rol ha sido cambiado a <strong>${nuevoRol}</strong>.</p>`
+        mensajeTexto: `Hola ${usuario}, tu rol ha sido cambiado a ${nuevoRol}. Tu contraseña sigue siendo la misma, una vez iniciando sesión, puedes cambiarla.`,
+        mensajeHTML: `<p>Hola ${usuario}, tu rol ha sido cambiado a <strong>${nuevoRol}</strong>. Tu contraseña sigue siendo la misma, una vez iniciando sesión, puedes cambiarla.</p>`
     }),
     postulanteDenegado: (usuario, nuevoRol) => ({
         asunto: "Postulante Denegado",

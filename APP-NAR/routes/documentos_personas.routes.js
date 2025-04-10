@@ -11,6 +11,8 @@ router.get('/descargarDocumento/:id', DocumentosPersonaController.downloadFile);
 //Consultar documentos de una persona por su id
 router.get('/documentosPostulante/:id', DocumentosPersonaController.getDocumentoComprobanteDomicilioByPersonaId);
 
+router.get('/documentos/:id', DocumentosPersonaController.getDocumentosByPersonaId);
+
 //Cambiar el estado del documento
 router.delete('/rechazarDocumento/:id', DocumentosPersonaController.deleteDocumentoPersonaComprobanteDomicilio);
 

@@ -95,6 +95,20 @@ class DocumentosPersonaService {
         return documento;
     }
 
+    async getDocumentosByPersonaId(idUsuario) {
+        if (!idUsuario) {
+            throw new Error('El id del usuario es requerido');
+        }
+
+        // Validar que el usuario exista
+        const usuario = await PersonaRepository.getUsuarioById(idUsuario);
+        if (!usuario) {
+            throw new Error(`El usuario con ID ${idUsuario} no existe`);
+        }
+
+        return await DocumentosPersonaRepository.getDocumentosByPersonaId(idUsuario);
+    }
+
     // async updateDocumentoPersonaComprobanteDomicilio(documentoAnteriorId, nuevoDocumentoId) {
     //     if (!documentoAnteriorId || !nuevoDocumentoId) {
     //         throw new Error('Los IDs de los documentos son requeridos');

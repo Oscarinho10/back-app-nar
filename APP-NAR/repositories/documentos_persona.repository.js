@@ -77,6 +77,16 @@ class DocumentoPersonaComprobanteDomicilioRepository {
         }
     }
 
+    async getDocumentosByPersonaId(idUsuario) {
+        try {
+            return await DocumentosPersona.find({
+                idUsuario: idUsuario
+            });
+        } catch (error) {
+            throw new Error('Error al obtener documentos por ID de usuario: ' + error.message);
+        }
+    }
+
     // async updateDocumentoPersonaComprobanteDomicilio(documentoAnteriorId, nuevoIdDocumento) {
     //     try {
     //         const result = await DocumentosPersona.updateOne(

@@ -172,6 +172,22 @@ class DocumentosPersonaController {
         }
     }
 
+    async getDocumentosByPersonaId(req, res) {
+        try {
+            const idUsuario = req.params.id;
+            if (!idUsuario || idUsuario == '' || idUsuario == null || idUsuario == undefined) {
+                throw new Error('El id del usuario es requerido');
+            }
+
+            const documentosPersona = await DocumentosPersonaService.getDocumentosByPersonaId(idUsuario);
+
+            res.json(documentosPersona);
+        } catch (error) {
+            res.status(400).json({ message: error.message });
+
+        }
+    }
+
     async getDocumentoComprobanteDomicilioById(req, res) {
         try {
             const idDocumento = req.params.id;
