@@ -33,14 +33,16 @@ class EmisionController {
             const asegurado = await AseguradoService.getAseguradoById(emision.idAsegurado);
             const seguro = await SeguroService.getSeguroById(emision.idSeguro);
             const cotizacion = await cotizacionService.getCotizacionById(emision.idCotizacion);
+            const cliente = await cotizacionService.getEmisionById(emision.idCliente);
     
             // Si no se encuentran el asegurado o el seguro, devolver un error
-            if (!asegurado || !seguro || !cotizacion) {
+            if (!asegurado || !seguro || !cotizacion || !cliente) {
                 return res.status(404).json({ success: false, message: "Datos del asegurado o seguro no encontrados" });
             }
     
             // Construir la respuesta con los datos necesarios
             const emisionDetallada = {
+                correoTitular: cliente.correo,
                 nombreAsegurado: `${asegurado.nombre} ${asegurado.apellidoPaterno} ${asegurado.apellidoMaterno}`,
                 rfc: asegurado.rfc,
                 telefono: asegurado.telefono,
