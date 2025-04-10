@@ -32,7 +32,10 @@ class SeguroRepository {
     }
 
     async getSegurosByTipo(tipo) {
-        return await Seguro.find({ tipo: new RegExp(tipo, 'i') });
+        return await Seguro.find({
+            tipo: new RegExp(tipo, 'i'),
+            estado: "activo" 
+        });
     }
 
     async updateSeguroStatusInactive(id) {

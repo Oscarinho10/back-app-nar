@@ -122,7 +122,7 @@ class SeguroController {
             const seguros = await SeguroService.getSegurosByTipo(tipo);
 
             if (!seguros || seguros.length === 0) {
-                return res.status(404).json({ message: 'No se encontraron seguros para este tipo' });
+                return res.status(200).json({ message: 'No se encontraron seguros para este tipo' });
             }
 
             // Obtener todas las aseguradoras de los seguros encontrados
