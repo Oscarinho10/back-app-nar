@@ -33,7 +33,7 @@ class EmisionController {
             const asegurado = await AseguradoService.getAseguradoById(emision.idAsegurado);
             const seguro = await SeguroService.getSeguroById(emision.idSeguro);
             const cotizacion = await cotizacionService.getCotizacionById(emision.idCotizacion);
-            const cliente = await cotizacionService.getEmisionById(emision.idCliente);
+            const cliente = await ClienteService.getClienteById(emision.idCliente);
     
             // Si no se encuentran el asegurado o el seguro, devolver un error
             if (!asegurado || !seguro || !cotizacion || !cliente) {
